@@ -43,12 +43,12 @@ export const NAV: NavItem[] = [
     features: ['Arrastar e soltar, bloqueios e intervalos', 'Agendamento recorrente (ex.: terças e quintas às 15h por 3 meses)', 'Status: agendado, confirmado, realizado, faltou, cancelado, reagendado', 'Taxa de ocupação por profissional'],
   },
   {
-    to: '/atendimentos', label: 'Atendimentos', icon: Stethoscope, permission: 'clinical.write', phase: 4,
+    to: '/atendimentos', label: 'Atendimentos', icon: Stethoscope, permission: 'clinical.read',
     summary: 'Registro da sessão com evolução, procedimentos e orientações.',
     features: ['Campo livre "Evolução / Observações do atendimento"', 'Numeração automática da sessão e desconto do pacote', 'Histórico permanente com versões — nada é apagado sem administrador', 'Auditoria de toda alteração'],
   },
   {
-    to: '/prontuarios', label: 'Prontuários', icon: FileHeart, permission: 'clinical.read', phase: 4,
+    to: '/prontuarios', label: 'Prontuários', icon: FileHeart, permission: 'clinical.read',
     summary: 'Dados clínicos, avaliações, plano de tratamento e evoluções.',
     features: ['Avaliação inicial e reavaliações (dor, ADM, força, testes e escalas)', 'Plano de tratamento com objetivo, frequência e previsão de término', 'Registro de quem acessou cada prontuário'],
   },

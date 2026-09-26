@@ -19,7 +19,7 @@ import {
 } from 'lucide-react';
 import { api } from '@/lib/api';
 import { useAuth } from '@/lib/auth';
-import { formatDate, formatDateTime, formatDayTime, formatMoney, whatsappLink } from '@/lib/format';
+import { formatDate, formatDateTime, formatDayTime, formatMoney, plural, whatsappLink } from '@/lib/format';
 import { LEAD_SOURCES, PATIENT_STAGES, SEX_LABELS, STAGE_LABELS, STAGE_TONES } from '@/lib/labels';
 import { Avatar, Badge, Button, Card, CardHeader, ConfirmDialog, EmptyState, ErrorState, Select, Skeleton, Spinner } from '@/components/ui';
 import { PatientFormModal } from '@/components/crm-forms';
@@ -293,7 +293,7 @@ export function PatientPage() {
               )}
               <SideStat icon={<CalendarCheck2 className="size-4" />} label="Última sessão">
                 {p.lastSessionAt ? formatDate(p.lastSessionAt) : <span className="text-slate-400">Nenhuma</span>}
-                <span className="block text-xs font-normal text-slate-500">{p.sessionsDone} sessões realizadas</span>
+                <span className="block text-xs font-normal text-slate-500">{plural(p.sessionsDone, 'sessão realizada', 'sessões realizadas')}</span>
               </SideStat>
             </div>
           </Card>

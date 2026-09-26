@@ -161,3 +161,6 @@ export function whatsappLink(phone: string | null | undefined) {
   if (d.length < 10) return null;
   return `https://wa.me/${d.length <= 11 ? '55' + d : d}`;
 }
+
+/** "1 sessão" / "3 sessões". */
+export const plural = (n: number, one: string, many: string) => `${n} ${n === 1 ? one : many}`;

@@ -16,6 +16,7 @@ import { RolesModule } from './modules/roles/roles.module';
 import { OrganizationModule } from './modules/organization/organization.module';
 import { SystemModule } from './modules/system/system.module';
 import { CrmModule } from './modules/crm/crm.module';
+import { ClinicalModule } from './modules/clinical/clinical.module';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { CrmModule } from './modules/crm/crm.module';
     OrganizationModule,
     SystemModule,
     CrmModule,
+    ClinicalModule,
   ],
   providers: [
     // Ordem importa: limite de requisições → autenticação → permissões.
