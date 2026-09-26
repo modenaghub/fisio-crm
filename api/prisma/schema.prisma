@@ -515,6 +515,8 @@ model Lead {
   organizationId  String          @db.Uuid
   name            String
   phone           String
+  /// Somente dígitos do telefone, para busca e deduplicação
+  phoneDigits     String?
   email           String?
   cpfEncrypted    String?
   cpfHash         String?
@@ -571,6 +573,8 @@ model Patient {
   sex             Sex          @default(NOT_INFORMED)
   phone           String?
   whatsapp        String?
+  /// Dígitos de telefone + WhatsApp, para busca (mantido pela aplicação)
+  phoneDigits     String?
   email           String?
   photoUrl        String?
   profession      String?

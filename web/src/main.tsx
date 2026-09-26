@@ -28,7 +28,7 @@ createRoot(document.getElementById('root')!).render(
           </div>
         )}
         <App />
-        <Toaster position="top-right" richColors closeButton />
+        <Toaster position="bottom-right" richColors closeButton />
       </AuthProvider>
     </QueryClientProvider>
   </StrictMode>,

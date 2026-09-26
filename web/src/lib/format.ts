@@ -100,3 +100,64 @@ export const ENTITY_LABELS: Record<string, string> = {
   services: 'Serviços',
   unit: 'Unidade',
 };
+
+export function maskCpf(v: string) {
+  const d = v.replace(/\D/g, '').slice(0, 11);
+  if (d.length <= 3) return d;
+  if (d.length <= 6) return `${d.slice(0, 3)}.${d.slice(3)}`;
+  if (d.length <= 9) return `${d.slice(0, 3)}.${d.slice(3, 6)}.${d.slice(6)}`;
+  return `${d.slice(0, 3)}.${d.slice(3, 6)}.${d.slice(6, 9)}-${d.slice(9)}`;
+}
+
+export function isValidCpf(value: string) {
+  const cpf = value.replace(/\D/g, '');
+  if (cpf.length !== 11 || /^(\d)\1{10}$/.test(cpf)) return false;
+  const calc = (len: number) => {
+    let sum = 0;
+    for (let i = 0; i < len; i++) sum += Number(cpf[i]) * (len + 1 - i);
+    const r = (sum * 10) % 11;
+    return r === 10 ? 0 : r;
+  };
+  return calc(9) === Number(cpf[9]) && calc(10) === Number(cpf[10]);
+}
+
+const TZ = 'America/Sao_Paulo';
+export function formatDate(iso: string | null | undefined, opts: Intl.DateTimeFormatOptions = { dateStyle: 'short' }) {
+  if (!iso) return '—';
+  // Datas puras (YYYY-MM-DD) não sofrem conversão de fuso.
+  if (/^\d{4}-\d{2}-\d{2}$/.test(iso)) {
+    const [y, m, d] = iso.split('-');
+    return opts.dateStyle === 'short' && Object.keys(opts).length === 1 ? `${d}/${m}/${y}` : new Date(`${iso}T12:00:00Z`).toLocaleDateString('pt-BR', { ...opts, timeZone: 'UTC' });
+  }
+  return new Date(iso).toLocaleDateString('pt-BR', { ...opts, timeZone: TZ });
+}
+
+export function formatTime(iso: string | null | undefined) {
+  if (!iso) return '—';
+  return new Date(iso).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', timeZone: TZ });
+}
+
+export function formatDayTime(iso: string | null | undefined) {
+  if (!iso) return '—';
+  const d = new Date(iso);
+  const today = localDateKey(new Date());
+  const key = localDateKey(d);
+  const tomorrow = localDateKey(new Date(Date.now() + 86400000));
+  const day = key === today ? 'Hoje' : key === tomorrow ? 'Amanhã' : d.toLocaleDateString('pt-BR', { weekday: 'short', day: '2-digit', month: '2-digit', timeZone: TZ });
+  return `${day}, ${formatTime(iso)}`;
+}
+
+/** Data local (fuso da clínica) no formato YYYY-MM-DD. */
+export function localDateKey(d: Date) {
+  return new Date(d.getTime() - 3 * 3600e3).toISOString().slice(0, 10);
+}
+
+export function onlyDigits(v: string | null | undefined) {
+  return (v ?? '').replace(/\D/g, '');
+}
+
+export function whatsappLink(phone: string | null | undefined) {
+  const d = onlyDigits(phone);
+  if (d.length < 10) return null;
+  return `https://wa.me/${d.length <= 11 ? '55' + d : d}`;
+}

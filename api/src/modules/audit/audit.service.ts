@@ -67,6 +67,26 @@ export class AuditService {
     });
   }
 
+  /**
+   * Registra acesso de leitura (LGPD: quem consultou dados pessoais/clínicos).
+   * Agrupa acessos repetidos do mesmo usuário ao mesmo registro em uma janela de 10 minutos.
+   */
+  async recordRead(ctx: RequestContext, entity: string, entityId: string, summary: string) {
+    const recent = await this.prisma.auditLog.findFirst({
+      where: {
+        organizationId: ctx.user.organizationId,
+        actorUserId: ctx.user.id,
+        action: AuditAction.READ,
+        entity,
+        entityId,
+        createdAt: { gte: new Date(Date.now() - 10 * 60_000) },
+      },
+      select: { id: true },
+    });
+    if (recent) return;
+    await this.record(ctx, { action: AuditAction.READ, entity, entityId, summary });
+  }
+
   /** Atalho a partir do contexto da requisição. */
   record(
     ctx: RequestContext,

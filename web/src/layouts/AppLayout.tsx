@@ -6,6 +6,7 @@ import { useAuth } from '@/lib/auth';
 import { NAV } from '@/lib/nav';
 import { Avatar } from '@/components/ui';
 import { Logo } from './AuthLayout';
+import { GlobalSearch } from '@/components/GlobalSearch';
 
 function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
   const { can, me } = useAuth();
@@ -128,7 +129,8 @@ export function AppLayout() {
           <button onClick={() => setDrawer(true)} className="-ml-1 rounded-lg p-2 text-slate-600 hover:bg-slate-100 lg:hidden" aria-label="Abrir menu">
             <Menu className="size-5" />
           </button>
-          <p className="min-w-0 flex-1 truncate text-sm font-medium text-slate-500">{me?.organization.clinicName}</p>
+          <GlobalSearch />
+          <p className="hidden min-w-0 flex-1 truncate text-right text-sm font-medium text-slate-500 lg:block">{me?.organization.clinicName}</p>
           <UserMenu />
         </header>
         <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8 lg:py-8">

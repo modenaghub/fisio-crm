@@ -15,6 +15,7 @@ import { UsersModule } from './modules/users/users.module';
 import { RolesModule } from './modules/roles/roles.module';
 import { OrganizationModule } from './modules/organization/organization.module';
 import { SystemModule } from './modules/system/system.module';
+import { CrmModule } from './modules/crm/crm.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { SystemModule } from './modules/system/system.module';
     RolesModule,
     OrganizationModule,
     SystemModule,
+    CrmModule,
   ],
   providers: [
     // Ordem importa: limite de requisições → autenticação → permissões.

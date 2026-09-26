@@ -28,12 +28,12 @@ export interface NavItem {
 export const NAV: NavItem[] = [
   { to: '/', label: 'Dashboard', icon: LayoutDashboard, permission: 'dashboard.view' },
   {
-    to: '/crm', label: 'CRM', icon: KanbanSquare, permission: 'leads.read', phase: 3,
+    to: '/crm', label: 'CRM', icon: KanbanSquare, permission: 'patients.read',
     summary: 'Funil visual de leads e pacientes, do primeiro contato à reativação.',
     features: ['Kanban com as 11 etapas do funil', 'Card com contato, origem, próxima consulta, sessões e responsável', 'Conversão de lead em paciente', 'Classificação e origem dos leads'],
   },
   {
-    to: '/pacientes', label: 'Pacientes', icon: Users, permission: 'patients.read', phase: 3,
+    to: '/pacientes', label: 'Pacientes', icon: Users, permission: 'patients.read',
     summary: 'Ficha completa de cada paciente, com dados pessoais, linha do tempo e busca global.',
     features: ['Cadastro com CPF cifrado e validado', 'Abas: dados, avaliação, tratamento, evoluções, agenda, financeiro, comunicação, documentos', 'Linha do tempo de todos os acontecimentos', 'Busca por nome, CPF, telefone, e-mail ou código'],
   },

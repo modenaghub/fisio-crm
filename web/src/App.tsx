@@ -15,6 +15,9 @@ import { ClinicSettingsPage, HoursSettingsPage, ServicesSettingsPage, UnitsSetti
 import { UsersPage } from '@/pages/settings/UsersPage';
 import { RolesPage } from '@/pages/settings/RolesPage';
 import { AuditPage } from '@/pages/settings/AuditPage';
+import { CrmPage } from '@/pages/crm/CrmPage';
+import { PatientsPage } from '@/pages/patients/PatientsPage';
+import { PatientPage } from '@/pages/patients/PatientPage';
 
 function FullScreenLoader() {
   return (
@@ -94,6 +97,9 @@ export function App() {
 
         <Route element={<RequireAuth><AppLayout /></RequireAuth>}>
           <Route index element={<Can permission="dashboard.view"><HomePage /></Can>} />
+          <Route path="crm" element={<Can permission="patients.read"><CrmPage /></Can>} />
+          <Route path="pacientes" element={<Can permission="patients.read"><PatientsPage /></Can>} />
+          <Route path="pacientes/:id" element={<Can permission="patients.read"><PatientPage /></Can>} />
           {NAV.filter((n) => n.phase).map((n) => (
             <Route key={n.to} path={n.to.slice(1)} element={<Can permission={n.permission}><ComingSoonPage item={n} /></Can>} />
           ))}
