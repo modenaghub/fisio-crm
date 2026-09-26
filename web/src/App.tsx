@@ -21,6 +21,7 @@ import { PatientPage } from '@/pages/patients/PatientPage';
 import { SessionsPage } from '@/pages/clinical/SessionsPage';
 import { RecordsPage } from '@/pages/clinical/RecordsPage';
 import { AgendaPage } from '@/pages/agenda/AgendaPage';
+import { FinancePage } from '@/pages/finance/FinancePage';
 
 function FullScreenLoader() {
   return (
@@ -104,6 +105,7 @@ export function App() {
           <Route path="pacientes" element={<Can permission="patients.read"><PatientsPage /></Can>} />
           <Route path="pacientes/:id" element={<Can permission="patients.read"><PatientPage /></Can>} />
           <Route path="agenda" element={<Can permission="schedule.read"><AgendaPage /></Can>} />
+          <Route path="financeiro" element={<Can permission="finance.read"><FinancePage /></Can>} />
           <Route path="atendimentos" element={<Can permission="clinical.read"><SessionsPage /></Can>} />
           <Route path="prontuarios" element={<Can permission="clinical.read"><RecordsPage /></Can>} />
           {NAV.filter((n) => n.phase).map((n) => (

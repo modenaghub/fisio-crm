@@ -19,6 +19,7 @@ import { SystemModule } from './modules/system/system.module';
 import { CrmModule } from './modules/crm/crm.module';
 import { ClinicalModule } from './modules/clinical/clinical.module';
 import { ScheduleModule } from './modules/schedule/schedule.module';
+import { FinanceModule } from './modules/finance/finance.module';
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { ScheduleModule } from './modules/schedule/schedule.module';
     CrmModule,
     ClinicalModule,
     ScheduleModule,
+    FinanceModule,
   ],
   providers: [
     // Ordem importa: limite de requisições → autenticação → permissões.

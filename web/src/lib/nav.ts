@@ -58,7 +58,7 @@ export const NAV: NavItem[] = [
     features: ['Bot de primeiro contato que cria o lead automaticamente', 'Lembretes 24 h e 2 h antes com botões Confirmar / Reagendar / Cancelar', 'Mensagens após falta, após atendimento e para pacientes sem retorno', 'Atendimento manual pelo fisioterapeuta'],
   },
   {
-    to: '/financeiro', label: 'Financeiro', icon: Wallet, permission: 'finance.read', phase: 6,
+    to: '/financeiro', label: 'Financeiro', icon: Wallet, permission: 'finance.read',
     summary: 'Receitas, despesas, pacotes de sessões e projeção de faturamento.',
     features: ['Contas a receber com PIX, dinheiro, cartão e transferência', 'Pacotes com sessões restantes calculadas automaticamente', 'Painel "Quanto vou faturar?" — hoje, semana, mês, 3, 6 e 12 meses', 'Metas de faturamento, sessões e novos pacientes'],
   },

@@ -8,6 +8,7 @@ import { maskCep, maskPhone, PAYMENT_METHOD_LABELS } from '@/lib/format';
 import type { DayHours, PaymentMethod, ServiceRow } from '@/lib/types';
 import { Badge, Button, Card, CardHeader, Checkbox, EmptyState, ErrorState, Field, Input, LoadingState, Modal, Select, Switch } from '@/components/ui';
 import { AvailabilityExtras } from './AvailabilityExtras';
+import { PackageTemplates } from './PackageTemplates';
 import { HoursEditor, hoursErrors, MoneyInput, ServicesEditor, servicesErrors, toServicePayload, weeklyHours, type ServiceDraft } from '@/components/editors';
 
 const UFS = 'AC AL AP AM BA CE DF ES GO MA MT MS MG PA PB PR PE PI RJ RN RS RO RR SC SP SE TO'.split(' ');
@@ -256,6 +257,7 @@ export function ServicesSettingsPage() {
   if (!list) return <Card>{q.isError ? <ErrorState message={q.error.message} onRetry={() => q.refetch()} /> : <LoadingState />}</Card>;
   const invalid = Object.keys(servicesErrors(list)).length > 0 || list.length === 0;
   return (
+    <div className="space-y-6">
     <Card>
       <CardHeader
         title="Serviços e valores"
@@ -270,6 +272,8 @@ export function ServicesSettingsPage() {
         <ServicesEditor value={list} onChange={setList} />
       </div>
     </Card>
+    <PackageTemplates />
+    </div>
   );
 }
 
