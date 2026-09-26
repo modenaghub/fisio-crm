@@ -7,11 +7,11 @@ export const SERIES = ['#2a78d6', '#eb6834', '#1baf7a', '#eda100', '#e87ba4', '#
 const INK = { primary: '#0f172a', secondary: '#475569', muted: '#94a3b8', grid: '#eef0f3', axis: '#cbd5e1' };
 
 /** Arredonda o máximo do eixo para um número "limpo" e gera os ticks. */
-export function niceTicks(max: number, count = 4) {
+export function niceTicks(max: number, count = 4, integer = false) {
   if (max <= 0) return [0, 1];
-  const raw = max / count;
+  const raw = integer ? Math.max(1, max / count) : max / count;
   const pow = 10 ** Math.floor(Math.log10(raw));
-  const step = [1, 2, 2.5, 5, 10].map((m) => m * pow).find((s) => s >= raw) ?? raw;
+  const step = [1, 2, 2.5, 5, 10].map((m) => m * pow).filter((s) => !integer || Number.isInteger(s)).find((s) => s >= raw) ?? raw;
   const top = Math.ceil(max / step) * step;
   return Array.from({ length: Math.round(top / step) + 1 }, (_, i) => i * step);
 }
@@ -39,6 +39,7 @@ export function ColumnChart<T extends Record<string, unknown>>({
   format,
   height = 240,
   ariaLabel,
+  integer = false,
 }: {
   data: T[];
   xKey: keyof T;
@@ -46,12 +47,14 @@ export function ColumnChart<T extends Record<string, unknown>>({
   format: (v: number) => string;
   height?: number;
   ariaLabel: string;
+  /** Contagens: ticks só em inteiros. */
+  integer?: boolean;
 }) {
   const [hover, setHover] = useState<number | null>(null);
   const [table, setTable] = useState(false);
   const colors = series.map((s, i) => s.color ?? SERIES[i]);
   const max = Math.max(0, ...data.flatMap((d) => series.map((s) => Number(d[s.key]) || 0)));
-  const ticks = useMemo(() => niceTicks(max), [max]);
+  const ticks = useMemo(() => niceTicks(max, 4, integer), [max, integer]);
   const top = ticks[ticks.length - 1] || 1;
   const [box, W] = useWidth<HTMLDivElement>();
   const padL = 64, padR = 8, padT = 12, padB = 28;
