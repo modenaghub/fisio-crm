@@ -1,0 +1,48 @@
+# Ambiente completo: PostgreSQL + API + Web.
+#   cp .env.example .env   (e preencha os segredos)
+#   docker compose up -d --build
+#   A clínica de demonstração (npm run db:seed) é só para desenvolvimento local, fora do Docker.
+# Acesse http://localhost:8080
+
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: fisio
+      POSTGRES_USER: fisio
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?defina POSTGRES_PASSWORD no .env}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U fisio -d fisio"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build: ./api
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      NODE_ENV: ${NODE_ENV:-production}
+      DATABASE_URL: postgresql://fisio:${POSTGRES_PASSWORD}@db:5432/fisio?schema=public
+      JWT_SECRET: ${JWT_SECRET:?defina JWT_SECRET no .env}
+      DATA_ENCRYPTION_KEY: ${DATA_ENCRYPTION_KEY:?defina DATA_ENCRYPTION_KEY no .env}
+      DATA_HASH_KEY: ${DATA_HASH_KEY:?defina DATA_HASH_KEY no .env}
+      WEB_URL: ${WEB_URL:-http://localhost:8080}
+      EMAIL_PROVIDER: ${EMAIL_PROVIDER:-mock}
+      WHATSAPP_PROVIDER: ${WHATSAPP_PROVIDER:-mock}
+
+  web:
+    build: ./web
+    restart: unless-stopped
+    depends_on:
+      - api
+    ports:
+      - "8080:80"
+
+volumes:
+  pgdata:

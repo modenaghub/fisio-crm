@@ -1,0 +1,36 @@
+@import 'tailwindcss';
+@import '@fontsource-variable/inter';
+
+@theme {
+  --font-sans: 'Inter Variable', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  /* Marca: verde-petróleo clínico */
+  --color-brand-50: #effaf8;
+  --color-brand-100: #d5f2ec;
+  --color-brand-200: #ace4d9;
+  --color-brand-300: #78cfc1;
+  --color-brand-400: #46b3a4;
+  --color-brand-500: #2a978a;
+  --color-brand-600: #1f7a70;
+  --color-brand-700: #0f766e;
+  --color-brand-800: #155e57;
+  --color-brand-900: #134e48;
+  --color-brand-950: #052e2b;
+}
+
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  body {
+    @apply bg-slate-50 text-slate-800;
+  }
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-brand-600;
+  }
+}
+
+@utility tabular {
+  font-variant-numeric: tabular-nums;
+}
