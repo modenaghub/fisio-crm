@@ -7,6 +7,7 @@ import { useAuth } from '@/lib/auth';
 import { maskCep, maskPhone, PAYMENT_METHOD_LABELS } from '@/lib/format';
 import type { DayHours, PaymentMethod, ServiceRow } from '@/lib/types';
 import { Badge, Button, Card, CardHeader, Checkbox, EmptyState, ErrorState, Field, Input, LoadingState, Modal, Select, Switch } from '@/components/ui';
+import { AvailabilityExtras } from './AvailabilityExtras';
 import { HoursEditor, hoursErrors, MoneyInput, ServicesEditor, servicesErrors, toServicePayload, weeklyHours, type ServiceDraft } from '@/components/editors';
 
 const UFS = 'AC AL AP AM BA CE DF ES GO MA MT MS MG PA PB PR PE PI RJ RN RS RO RR SC SP SE TO'.split(' ');
@@ -215,6 +216,7 @@ export function HoursSettingsPage() {
   if (!days) return <Card>{q.isError ? <ErrorState message={q.error.message} onRetry={() => q.refetch()} /> : <LoadingState />}</Card>;
   const invalid = Object.keys(hoursErrors(days)).length > 0 || weeklyHours(days) === 0;
   return (
+    <div className="space-y-6">
     <Card>
       <CardHeader
         title="Horários de atendimento"
@@ -227,9 +229,10 @@ export function HoursSettingsPage() {
       />
       <div className="p-5">
         <HoursEditor value={days} onChange={setDays} />
-        <p className="mt-3 text-xs text-slate-500">Folgas, feriados, férias, bloqueios e horários extras serão configurados na Agenda (Fase 5).</p>
       </div>
     </Card>
+    <AvailabilityExtras />
+    </div>
   );
 }
 

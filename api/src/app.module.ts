@@ -6,6 +6,7 @@ import { config } from './common/config';
 import { PrismaModule } from './common/prisma.service';
 import { CryptoModule } from './common/crypto.service';
 import { PermissionSyncModule } from './common/permission-sync.service';
+import { EventsModule } from './common/events';
 import { JwtAuthGuard } from './common/auth/jwt-auth.guard';
 import { PermissionsGuard } from './common/auth/permissions.guard';
 import { IntegrationsModule } from './integrations/integrations.module';
@@ -17,6 +18,7 @@ import { OrganizationModule } from './modules/organization/organization.module';
 import { SystemModule } from './modules/system/system.module';
 import { CrmModule } from './modules/crm/crm.module';
 import { ClinicalModule } from './modules/clinical/clinical.module';
+import { ScheduleModule } from './modules/schedule/schedule.module';
 
 @Module({
   imports: [
@@ -25,6 +27,7 @@ import { ClinicalModule } from './modules/clinical/clinical.module';
     PrismaModule,
     CryptoModule,
     PermissionSyncModule,
+    EventsModule,
     IntegrationsModule,
     AuditModule,
     AuthModule,
@@ -34,6 +37,7 @@ import { ClinicalModule } from './modules/clinical/clinical.module';
     SystemModule,
     CrmModule,
     ClinicalModule,
+    ScheduleModule,
   ],
   providers: [
     // Ordem importa: limite de requisições → autenticação → permissões.

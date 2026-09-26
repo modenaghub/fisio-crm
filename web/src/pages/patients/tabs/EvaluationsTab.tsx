@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import clsx from 'clsx';
@@ -77,7 +78,7 @@ function RowsEditor<T extends object>({ title, rows, setRows, blank, columns }: 
   );
 }
 
-function EvaluationModal({ patientId, initial, onClose, defaultType }: { patientId: string; initial?: Evaluation; onClose: () => void; defaultType: Evaluation['type'] }) {
+function EvaluationModal({ patientId, initial, onClose, defaultType, appointmentId }: { patientId: string; initial?: Evaluation; onClose: () => void; defaultType: Evaluation['type']; appointmentId?: string }) {
   const qc = useQueryClient();
   const nowLocal = () => { const d = new Date(); return new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 16); };
   const [v, setV] = useState({
@@ -96,6 +97,7 @@ function EvaluationModal({ patientId, initial, onClose, defaultType }: { patient
     mutationFn: () => {
       const body = {
         ...v, performedAt: new Date(v.performedAt).toISOString(),
+        appointmentId: initial ? undefined : appointmentId,
         rangeOfMotion: rom.filter((r) => r.joint && r.movement), strength: strength.filter((r) => r.muscle),
         tests: tests.filter((t) => t.name), scales: scales.filter((s) => s.name && s.score),
       };
@@ -104,6 +106,7 @@ function EvaluationModal({ patientId, initial, onClose, defaultType }: { patient
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['evaluations', patientId] });
       qc.invalidateQueries({ queryKey: ['patient', patientId] });
+      qc.invalidateQueries({ queryKey: ['agenda'] });
       toast.success('Avaliação salva');
       onClose();
     },
@@ -173,6 +176,14 @@ export default function EvaluationsTab({ patient }: { patient: PatientDetail }) 
   const q = useQuery({ queryKey: ['evaluations', patient.id], queryFn: () => api<Evaluation[]>(`/patients/${patient.id}/evaluations`) });
   const [open, setOpen] = useState<string | null>(null);
   const [editing, setEditing] = useState<Evaluation | 'new' | null>(null);
+  // Vindo da agenda ("Registrar avaliação"): abre o formulário já ligado ao agendamento.
+  const [params, setParams] = useSearchParams();
+  const fromAppointment = params.get('agendamento') ?? undefined;
+  useEffect(() => { if (fromAppointment && can('clinical.write')) setEditing('new'); }, [fromAppointment, can]);
+  const closeModal = () => {
+    setEditing(null);
+    if (fromAppointment) { params.delete('agendamento'); setParams(params, { replace: true }); }
+  };
   if (q.isLoading) return <Card><LoadingState rows={2} /></Card>;
   if (q.isError) return <Card><ErrorState message={q.error.message} onRetry={() => q.refetch()} /></Card>;
   const list = q.data ?? [];
@@ -209,7 +220,7 @@ export default function EvaluationsTab({ patient }: { patient: PatientDetail }) 
         </ul>
       </Card>
       {list.length > 0 && <p className="text-xs text-slate-400"><Badge>Registro clínico</Badge> Toda consulta e alteração fica registrada na auditoria.</p>}
-      {editing && <EvaluationModal patientId={patient.id} initial={editing === 'new' ? undefined : editing} defaultType={list.length ? 'FOLLOW_UP' : 'INITIAL'} onClose={() => setEditing(null)} />}
+      {editing && <EvaluationModal patientId={patient.id} initial={editing === 'new' ? undefined : editing} defaultType={list.length ? 'FOLLOW_UP' : 'INITIAL'} appointmentId={fromAppointment} onClose={closeModal} />}
     </div>
   );
 }

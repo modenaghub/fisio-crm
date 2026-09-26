@@ -8,7 +8,7 @@ import { PageHeader } from '@/components/ui';
 export const SETTINGS_SECTIONS = [
   { to: 'minha-conta', label: 'Minha conta', icon: KeyRound },
   { to: 'clinica', label: 'Clínica', icon: Building2, permission: 'settings.manage' },
-  { to: 'horarios', label: 'Horários', icon: CalendarClock, permission: 'schedule.availability' },
+  { to: 'horarios', label: 'Horários e folgas', icon: CalendarClock, permission: 'schedule.availability' },
   { to: 'servicos', label: 'Serviços e valores', icon: Tags, permission: 'settings.manage' },
   { to: 'unidades', label: 'Unidades', icon: MapPin, permission: 'settings.manage' },
   { to: 'usuarios', label: 'Usuários', icon: Users, permission: 'users.manage' },

@@ -38,7 +38,7 @@ export const NAV: NavItem[] = [
     features: ['Cadastro com CPF cifrado e validado', 'Abas: dados, avaliação, tratamento, evoluções, agenda, financeiro, comunicação, documentos', 'Linha do tempo de todos os acontecimentos', 'Busca por nome, CPF, telefone, e-mail ou código'],
   },
   {
-    to: '/agenda', label: 'Agenda', icon: CalendarDays, permission: 'schedule.read', phase: 5,
+    to: '/agenda', label: 'Agenda', icon: CalendarDays, permission: 'schedule.read',
     summary: 'Agenda por dia, semana e mês, adaptada ao celular.',
     features: ['Arrastar e soltar, bloqueios e intervalos', 'Agendamento recorrente (ex.: terças e quintas às 15h por 3 meses)', 'Status: agendado, confirmado, realizado, faltou, cancelado, reagendado', 'Taxa de ocupação por profissional'],
   },
