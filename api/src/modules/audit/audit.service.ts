@@ -97,7 +97,7 @@ export class AuditService {
       {
         ...data,
         organizationId: ctx.user.organizationId,
-        actorUserId: ctx.user.id,
+        actorUserId: ctx.user.id || null,
         actorName: ctx.user.name,
         ip: ctx.ip,
         userAgent: ctx.userAgent,

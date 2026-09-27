@@ -21,6 +21,8 @@ import { ClinicalModule } from './modules/clinical/clinical.module';
 import { ScheduleModule } from './modules/schedule/schedule.module';
 import { FinanceModule } from './modules/finance/finance.module';
 import { DashboardModule } from './modules/dashboard/dashboard.module';
+import { NotificationsModule } from './modules/notifications/notifications.module';
+import { CommunicationModule } from './modules/communication/communication.module';
 
 @Module({
   imports: [
@@ -42,6 +44,8 @@ import { DashboardModule } from './modules/dashboard/dashboard.module';
     ScheduleModule,
     FinanceModule,
     DashboardModule,
+    NotificationsModule,
+    CommunicationModule,
   ],
   providers: [
     // Ordem importa: limite de requisições → autenticação → permissões.

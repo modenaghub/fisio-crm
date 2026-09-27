@@ -1,17 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { randomUUID } from 'node:crypto';
-import type {
-  InboundWhatsAppMessage,
-  WhatsAppProvider,
-  WhatsAppTemplateMessage,
-  WhatsAppTextMessage,
-} from './whatsapp.provider';
+import type { InboundWhatsAppMessage, WhatsAppProvider, WhatsAppTemplateMessage, WhatsAppTextMessage } from './whatsapp.provider';
 
 /**
- * MODO DEMONSTRAÇÃO — nenhuma mensagem é enviada ao WhatsApp.
- * INTEGRAÇÃO REAL: criar CloudWhatsAppProvider chamando
- * POST https://graph.facebook.com/{versão}/{PHONE_NUMBER_ID}/messages com WHATSAPP_TOKEN,
- * e validar o webhook com WHATSAPP_APP_SECRET. Ativar com WHATSAPP_PROVIDER=cloud.
+ * MODO DEMONSTRAÇÃO — nenhuma mensagem sai para o WhatsApp; tudo fica registrado no sistema.
+ * O simulador da tela Comunicação envia { from, text } para o webhook, como se o paciente tivesse escrito.
+ * Para produção: WHATSAPP_PROVIDER=cloud (ver CloudWhatsAppProvider).
  */
 @Injectable()
 export class MockWhatsAppProvider implements WhatsAppProvider {
@@ -19,7 +13,7 @@ export class MockWhatsAppProvider implements WhatsAppProvider {
   private readonly logger = new Logger('WhatsAppMock');
 
   async sendText(msg: WhatsAppTextMessage) {
-    this.logger.log(`[DEMO] WhatsApp para ${msg.to}: ${msg.body.slice(0, 80)}`);
+    this.logger.log(`[DEMO] WhatsApp para ${msg.to}: ${msg.body.slice(0, 80)}${msg.buttons?.length ? ` [${msg.buttons.join(' | ')}]` : ''}`);
     return { externalId: `mock-${randomUUID()}` };
   }
 
@@ -29,8 +23,12 @@ export class MockWhatsAppProvider implements WhatsAppProvider {
   }
 
   parseWebhook(rawBody: Buffer): InboundWhatsAppMessage[] {
-    // No modo demonstração o simulador interno envia { from, text }.
-    const body = JSON.parse(rawBody.toString('utf8'));
-    return [{ from: body.from, text: body.text, externalId: `mock-${randomUUID()}`, receivedAt: new Date() }];
+    const body = JSON.parse(rawBody.toString('utf8') || '{}');
+    if (!body.from || (!body.text && !body.buttonPayload)) return [];
+    return [{ kind: 'message', from: String(body.from), text: body.text, buttonPayload: body.buttonPayload, profileName: body.name, externalId: body.id ?? `mock-${randomUUID()}`, receivedAt: new Date() }];
+  }
+
+  verifyToken() {
+    return true;
   }
 }

@@ -5,6 +5,7 @@ import { MockEmailProvider } from './email/mock-email.provider';
 import { SmtpEmailProvider } from './email/smtp-email.provider';
 import { WHATSAPP_PROVIDER } from './whatsapp/whatsapp.provider';
 import { MockWhatsAppProvider } from './whatsapp/mock-whatsapp.provider';
+import { CloudWhatsAppProvider } from './whatsapp/cloud-whatsapp.provider';
 import { CALENDAR_PROVIDER, MockCalendarProvider } from './calendar/calendar.provider';
 import { MockPaymentGateway, PAYMENT_GATEWAY } from './payments/payment-gateway';
 import { AI_PROVIDER, MockAiProvider } from './ai/ai.provider';
@@ -17,8 +18,7 @@ import { AI_PROVIDER, MockAiProvider } from './ai/ai.provider';
 @Module({
   providers: [
     { provide: EMAIL_PROVIDER, useClass: config.emailProvider === 'smtp' ? SmtpEmailProvider : MockEmailProvider },
-    // INTEGRAÇÃO REAL: WHATSAPP_PROVIDER=cloud → CloudWhatsAppProvider (Fase 7)
-    { provide: WHATSAPP_PROVIDER, useClass: MockWhatsAppProvider },
+    { provide: WHATSAPP_PROVIDER, useClass: config.whatsappProvider === 'cloud' ? CloudWhatsAppProvider : MockWhatsAppProvider },
     { provide: CALENDAR_PROVIDER, useClass: MockCalendarProvider },
     { provide: PAYMENT_GATEWAY, useClass: MockPaymentGateway },
     { provide: AI_PROVIDER, useClass: MockAiProvider },

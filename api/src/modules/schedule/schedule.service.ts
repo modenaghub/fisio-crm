@@ -266,7 +266,7 @@ export class ScheduleService {
         },
         include,
       });
-      await tx.appointmentStatusHistory.create({ data: { appointmentId: id, fromStatus: a.status, toStatus: dto.status, changedById: ctx.user.id, channel: dto.channel ?? channel, reason: dto.reason ?? null } });
+      await tx.appointmentStatusHistory.create({ data: { appointmentId: id, fromStatus: a.status, toStatus: dto.status, changedById: ctx.user.id || null, channel: dto.channel ?? channel, reason: dto.reason ?? null } });
       // Cancelou/faltou: a cobrança ainda não paga daquele agendamento é cancelada.
       if (dto.status === 'CANCELLED') {
         await tx.payment.updateMany({ where: { appointmentId: id, status: 'PENDING', paidCents: 0 }, data: { status: 'CANCELLED' } });

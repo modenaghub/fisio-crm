@@ -1,46 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { Channel, Prisma } from '@prisma/client';
 import { DEFAULT_EXPENSE_CATEGORIES, SYSTEM_ROLES } from '../../common/permissions';
+import { DEFAULT_TEMPLATES } from '../communication/templates';
 
 /** Textos automáticos padrão (seção 13 da especificação). Editáveis em Configurações. */
-export const DEFAULT_MESSAGE_TEMPLATES = [
-  {
-    key: 'welcome_bot',
-    name: 'Boas-vindas (novo contato)',
-    body: 'Olá! Seja bem-vindo(a) à {{clinica}}. Para realizarmos seu primeiro cadastro, precisamos de algumas informações.',
-    buttons: [],
-  },
-  {
-    key: 'reminder_24h',
-    name: 'Lembrete 24 horas antes',
-    body: 'Olá, {{paciente}}! Passando para confirmar sua sessão de fisioterapia amanhã às {{hora}}.',
-    buttons: ['CONFIRMAR', 'REAGENDAR', 'CANCELAR'],
-  },
-  {
-    key: 'reminder_2h',
-    name: 'Lembrete 2 horas antes',
-    body: 'Olá, {{paciente}}! Sua sessão está marcada para hoje às {{hora}}.',
-    buttons: [],
-  },
-  {
-    key: 'no_show',
-    name: 'Após falta',
-    body: 'Olá, {{paciente}}. Notamos que você não conseguiu comparecer à sua sessão. Deseja reagendar?',
-    buttons: ['REAGENDAR'],
-  },
-  {
-    key: 'post_session',
-    name: 'Após atendimento',
-    body: 'Olá, {{paciente}}! Sua sessão foi registrada. Caso tenha alguma dúvida ou desconforto, entre em contato conosco.',
-    buttons: [],
-  },
-  {
-    key: 'no_return',
-    name: 'Paciente sem retorno',
-    body: 'Olá, {{paciente}}! Notamos que faz alguns dias desde sua última sessão. Gostaria de verificar sua próxima disponibilidade?',
-    buttons: ['AGENDAR'],
-  },
-];
+/** Textos padrão do WhatsApp — a lista completa fica no módulo de comunicação. */
+export const DEFAULT_MESSAGE_TEMPLATES = DEFAULT_TEMPLATES.map((t) => ({ key: t.key, name: t.name, body: t.body, buttons: t.buttons ?? [], whatsappTemplateName: t.whatsappTemplateName ?? null }));
 
 function slugify(name: string) {
   return (

@@ -1,6 +1,7 @@
 import { NotFoundException } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import type { RequestContext } from './auth/auth.types';
+import { PERMISSION_CATALOG } from './permissions';
 
 /** Remove máscara de telefone/CPF. */
 export const digits = (v?: string | null) => (v ?? '').replace(/\D/g, '');
@@ -89,3 +90,16 @@ export function localWeekday(d: Date) {
 export function localTime(d: Date) {
   return new Date(d.getTime() + TZ_OFFSET_MIN * 60_000).toISOString().slice(11, 16);
 }
+
+/**
+ * Contexto de ações feitas pelo sistema (robô do WhatsApp, lembretes, automações), sem usuário humano.
+ * O id vazio vira `null` nas colunas de autoria; o nome aparece na auditoria.
+ */
+export function systemContext(organizationId: string, name = 'Sistema'): RequestContext {
+  return {
+    user: { id: '', sessionId: '', organizationId, name, email: '', roleKey: 'SYSTEM', roleName: 'Sistema', permissions: PERMISSION_CATALOG.map((p) => p.code) },
+  };
+}
+
+/** Id do autor para colunas de FK (vazio no contexto de sistema). */
+export const actorId = (ctx: RequestContext) => ctx.user.id || null;

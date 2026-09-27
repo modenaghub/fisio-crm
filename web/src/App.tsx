@@ -9,6 +9,7 @@ import { DevMailboxPage, ForgotPasswordPage, LoginPage, RegisterPage, ResetPassw
 import { OnboardingPage } from '@/pages/onboarding/OnboardingPage';
 import { HomePage } from '@/pages/HomePage';
 import { ComingSoonPage } from '@/pages/ComingSoonPage';
+import { CommunicationPage } from '@/pages/communication/CommunicationPage';
 import { SettingsLayout } from '@/pages/settings/SettingsLayout';
 import { AccountPage } from '@/pages/settings/AccountPage';
 import { ClinicSettingsPage, HoursSettingsPage, ServicesSettingsPage, UnitsSettingsPage } from '@/pages/settings/ClinicPages';
@@ -107,6 +108,7 @@ export function App() {
           <Route path="agenda" element={<Can permission="schedule.read"><AgendaPage /></Can>} />
           <Route path="financeiro" element={<Can permission="finance.read"><FinancePage /></Can>} />
           <Route path="atendimentos" element={<Can permission="clinical.read"><SessionsPage /></Can>} />
+          <Route path="comunicacao" element={<Can permission="messages.read"><CommunicationPage /></Can>} />
           <Route path="prontuarios" element={<Can permission="clinical.read"><RecordsPage /></Can>} />
           {NAV.filter((n) => n.phase).map((n) => (
             <Route key={n.to} path={n.to.slice(1)} element={<Can permission={n.permission}><ComingSoonPage item={n} /></Can>} />

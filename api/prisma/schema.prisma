@@ -22,115 +22,117 @@ enum OrganizationPlan {
 }
 
 model Organization {
-  id         String           @id @default(uuid()) @db.Uuid
-  name       String
-  slug       String           @unique
-  plan       OrganizationPlan @default(TRIAL)
-  timezone   String           @default("America/Sao_Paulo")
-  isActive   Boolean          @default(true)
+  id                 String           @id @default(uuid()) @db.Uuid
+  name               String
+  slug               String           @unique
+  plan               OrganizationPlan @default(TRIAL)
+  timezone           String           @default("America/Sao_Paulo")
+  isActive           Boolean          @default(true)
   // Retenção configurável (LGPD). null = manter indefinidamente até definição jurídica.
   dataRetentionYears Int?
-  createdAt  DateTime         @default(now()) @db.Timestamptz(3)
-  updatedAt  DateTime         @updatedAt @db.Timestamptz(3)
+  createdAt          DateTime         @default(now()) @db.Timestamptz(3)
+  updatedAt          DateTime         @updatedAt @db.Timestamptz(3)
 
-  units                Unit[]
-  users                User[]
-  roles                Role[]
-  settings             BusinessSettings?
-  services             Service[]
-  auditLogs            AuditLog[]
-  integrationConfigs   IntegrationConfig[]
-  leads                Lead[]
-  patients             Patient[]
-  medicalConditions    MedicalCondition[]
-  appointments         Appointment[]
-  recurrenceSeries     RecurrenceSeries[]
-  availabilityRules    AvailabilityRule[]
+  units                  Unit[]
+  users                  User[]
+  roles                  Role[]
+  settings               BusinessSettings?
+  services               Service[]
+  auditLogs              AuditLog[]
+  integrationConfigs     IntegrationConfig[]
+  leads                  Lead[]
+  patients               Patient[]
+  medicalConditions      MedicalCondition[]
+  appointments           Appointment[]
+  recurrenceSeries       RecurrenceSeries[]
+  availabilityRules      AvailabilityRule[]
   availabilityExceptions AvailabilityException[]
-  holidays             Holiday[]
-  evaluations          Evaluation[]
-  treatmentPlans       TreatmentPlan[]
-  treatmentSessions    TreatmentSession[]
-  sessionEvolutions    SessionEvolution[]
-  packageTemplates     PackageTemplate[]
-  packages             Package[]
-  payments             Payment[]
-  expenses             Expense[]
-  expenseCategories    ExpenseCategory[]
-  financialTransactions FinancialTransaction[]
-  conversations        Conversation[]
-  messages             Message[]
-  messageTemplates     MessageTemplate[]
-  automations          Automation[]
-  tasks                Task[]
-  documents            Document[]
-  notifications        Notification[]
-  goals                Goal[]
-  consents             Consent[]
+  holidays               Holiday[]
+  evaluations            Evaluation[]
+  treatmentPlans         TreatmentPlan[]
+  treatmentSessions      TreatmentSession[]
+  sessionEvolutions      SessionEvolution[]
+  packageTemplates       PackageTemplate[]
+  packages               Package[]
+  payments               Payment[]
+  expenses               Expense[]
+  expenseCategories      ExpenseCategory[]
+  financialTransactions  FinancialTransaction[]
+  conversations          Conversation[]
+  messages               Message[]
+  messageDispatches      MessageDispatch[]
+  messageTemplates       MessageTemplate[]
+  automations            Automation[]
+  tasks                  Task[]
+  documents              Document[]
+  notifications          Notification[]
+  goals                  Goal[]
+  consents               Consent[]
 
   @@map("organizations")
 }
 
 model Unit {
-  id             String       @id @default(uuid()) @db.Uuid
-  organizationId String       @db.Uuid
+  id             String   @id @default(uuid()) @db.Uuid
+  organizationId String   @db.Uuid
   name           String
   phone          String?
   email          String?
   addressLine    String?
   city           String?
-  state          String?      @db.VarChar(2)
-  zipCode        String?      @db.VarChar(9)
-  isActive       Boolean      @default(true)
-  createdAt      DateTime     @default(now()) @db.Timestamptz(3)
-  updatedAt      DateTime     @updatedAt @db.Timestamptz(3)
+  state          String?  @db.VarChar(2)
+  zipCode        String?  @db.VarChar(9)
+  isActive       Boolean  @default(true)
+  createdAt      DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt      DateTime @updatedAt @db.Timestamptz(3)
 
-  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  userUnits      UserUnit[]
-  appointments   Appointment[]
-  availabilityRules AvailabilityRule[]
+  organization           Organization            @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  userUnits              UserUnit[]
+  appointments           Appointment[]
+  availabilityRules      AvailabilityRule[]
   availabilityExceptions AvailabilityException[]
-  payments       Payment[]
-  expenses       Expense[]
+  payments               Payment[]
+  expenses               Expense[]
 
   @@index([organizationId])
   @@map("units")
 }
 
 model User {
-  id                 String    @id @default(uuid()) @db.Uuid
-  organizationId     String    @db.Uuid
-  roleId             String    @db.Uuid
-  name               String
-  email              String
-  phone              String?
-  avatarUrl          String?
-  passwordHash       String
-  isActive           Boolean   @default(true)
-  failedLoginCount   Int       @default(0)
-  lockedUntil        DateTime? @db.Timestamptz(3)
-  lastLoginAt        DateTime? @db.Timestamptz(3)
-  passwordChangedAt  DateTime? @db.Timestamptz(3)
-  createdById        String?   @db.Uuid
-  createdAt          DateTime  @default(now()) @db.Timestamptz(3)
-  updatedAt          DateTime  @updatedAt @db.Timestamptz(3)
+  id                String    @id @default(uuid()) @db.Uuid
+  organizationId    String    @db.Uuid
+  roleId            String    @db.Uuid
+  name              String
+  email             String
+  phone             String?
+  avatarUrl         String?
+  passwordHash      String
+  isActive          Boolean   @default(true)
+  failedLoginCount  Int       @default(0)
+  lockedUntil       DateTime? @db.Timestamptz(3)
+  lastLoginAt       DateTime? @db.Timestamptz(3)
+  passwordChangedAt DateTime? @db.Timestamptz(3)
+  createdById       String?   @db.Uuid
+  createdAt         DateTime  @default(now()) @db.Timestamptz(3)
+  updatedAt         DateTime  @updatedAt @db.Timestamptz(3)
 
-  organization       Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  role               Role         @relation(fields: [roleId], references: [id])
-  professional       ProfessionalProfile?
-  userUnits          UserUnit[]
-  permissionOverrides UserPermissionOverride[]
-  sessions           Session[]
-  passwordResetTokens PasswordResetToken[]
-  notifications      Notification[]
-  assignedTasks      Task[]            @relation("TaskAssignee")
-  responsibleLeads   Lead[]            @relation("LeadResponsible")
-  responsiblePatients Patient[]        @relation("PatientResponsible")
-  appointments       Appointment[]     @relation("AppointmentProfessional")
-  treatmentSessions  TreatmentSession[] @relation("SessionProfessional")
-  evolutionVersions  SessionEvolutionVersion[]
-  evaluations        Evaluation[]
-  sentMessages       Message[]
+  organization          Organization              @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  role                  Role                      @relation(fields: [roleId], references: [id])
+  professional          ProfessionalProfile?
+  userUnits             UserUnit[]
+  permissionOverrides   UserPermissionOverride[]
+  sessions              Session[]
+  passwordResetTokens   PasswordResetToken[]
+  notifications         Notification[]
+  assignedTasks         Task[]                    @relation("TaskAssignee")
+  responsibleLeads      Lead[]                    @relation("LeadResponsible")
+  responsiblePatients   Patient[]                 @relation("PatientResponsible")
+  appointments          Appointment[]             @relation("AppointmentProfessional")
+  treatmentSessions     TreatmentSession[]        @relation("SessionProfessional")
+  evolutionVersions     SessionEvolutionVersion[]
+  evaluations           Evaluation[]
+  sentMessages          Message[]
+  assignedConversations Conversation[]            @relation("ConversationAssignee")
 
   // e-mail único por organização (o mesmo e-mail pode existir em outra clínica)
   @@unique([organizationId, email])
@@ -151,16 +153,16 @@ model UserUnit {
 model Role {
   id             String   @id @default(uuid()) @db.Uuid
   organizationId String   @db.Uuid
-  key            String   // ADMIN, PHYSIO, RECEPTION ou personalizado
+  key            String // ADMIN, PHYSIO, RECEPTION ou personalizado
   name           String
   description    String?
   isSystem       Boolean  @default(false)
   createdAt      DateTime @default(now()) @db.Timestamptz(3)
   updatedAt      DateTime @updatedAt @db.Timestamptz(3)
 
-  organization   Organization     @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  permissions    RolePermission[]
-  users          User[]
+  organization Organization     @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  permissions  RolePermission[]
+  users        User[]
 
   @@unique([organizationId, key])
   @@map("roles")
@@ -172,8 +174,8 @@ model Permission {
   module      String
   description String
 
-  roles       RolePermission[]
-  overrides   UserPermissionOverride[]
+  roles     RolePermission[]
+  overrides UserPermissionOverride[]
 
   @@map("permissions")
 }
@@ -217,7 +219,7 @@ model Session {
   revokeReason String?
   createdAt    DateTime  @default(now()) @db.Timestamptz(3)
 
-  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([familyId])
@@ -256,21 +258,21 @@ enum AuditAction {
 
 /// Somente inserção: trigger no banco bloqueia UPDATE/DELETE.
 model AuditLog {
-  id             String       @id @default(uuid()) @db.Uuid
-  organizationId String       @db.Uuid
-  actorUserId    String?      @db.Uuid
+  id             String      @id @default(uuid()) @db.Uuid
+  organizationId String      @db.Uuid
+  actorUserId    String?     @db.Uuid
   actorName      String?
   action         AuditAction
   entity         String
   entityId       String?
   summary        String?
-  changes        Json?        // { campo: { from, to } }
+  changes        Json? // { campo: { from, to } }
   metadata       Json?
   ipAddress      String?
   userAgent      String?
-  createdAt      DateTime     @default(now()) @db.Timestamptz(3)
+  createdAt      DateTime    @default(now()) @db.Timestamptz(3)
 
-  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
   @@index([organizationId, createdAt])
   @@index([organizationId, entity, entityId])
@@ -279,30 +281,30 @@ model AuditLog {
 }
 
 model BusinessSettings {
-  organizationId       String   @id @db.Uuid
-  clinicName           String
-  logoUrl              String?
-  phone                String?
-  whatsapp             String?
-  email                String?
-  addressLine          String?
-  city                 String?
-  state                String?  @db.VarChar(2)
-  zipCode              String?  @db.VarChar(9)
-  defaultSessionPriceCents Int  @default(0)
-  defaultSessionMinutes    Int  @default(50)
+  organizationId           String          @id @db.Uuid
+  clinicName               String
+  logoUrl                  String?
+  phone                    String?
+  whatsapp                 String?
+  email                    String?
+  addressLine              String?
+  city                     String?
+  state                    String?         @db.VarChar(2)
+  zipCode                  String?         @db.VarChar(9)
+  defaultSessionPriceCents Int             @default(0)
+  defaultSessionMinutes    Int             @default(50)
   // Regras de agendamento
-  minBookingNoticeHours    Int  @default(2)
-  cancellationNoticeHours  Int  @default(24)
-  allowOverbooking         Boolean @default(false)
-  noShowFollowUpDays       Int  @default(7)
+  minBookingNoticeHours    Int             @default(2)
+  cancellationNoticeHours  Int             @default(24)
+  allowOverbooking         Boolean         @default(false)
+  noShowFollowUpDays       Int             @default(7)
   acceptedPaymentMethods   PaymentMethod[] @default([PIX, CASH, CREDIT_CARD, DEBIT_CARD, BANK_TRANSFER])
-  onboardingCompletedAt    DateTime? @db.Timestamptz(3)
-  onboardingStep           Int      @default(0)
-  createdAt                DateTime @default(now()) @db.Timestamptz(3)
-  updatedAt                DateTime @updatedAt @db.Timestamptz(3)
+  onboardingCompletedAt    DateTime?       @db.Timestamptz(3)
+  onboardingStep           Int             @default(0)
+  createdAt                DateTime        @default(now()) @db.Timestamptz(3)
+  updatedAt                DateTime        @updatedAt @db.Timestamptz(3)
 
-  organization         Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
   @@map("business_settings")
 }
@@ -327,12 +329,12 @@ model IntegrationConfig {
   organizationId   String              @db.Uuid
   provider         IntegrationProvider
   status           IntegrationStatus   @default(MOCK)
-  publicConfig     Json?               // dados não sensíveis (ex.: número exibido)
-  encryptedSecrets String?             // AES-256-GCM
+  publicConfig     Json? // dados não sensíveis (ex.: número exibido)
+  encryptedSecrets String? // AES-256-GCM
   lastError        String?
   updatedAt        DateTime            @updatedAt @db.Timestamptz(3)
 
-  organization     Organization        @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
   @@unique([organizationId, provider])
   @@map("integration_configs")
@@ -353,14 +355,14 @@ model Consent {
   leadId         String?        @db.Uuid
   purpose        ConsentPurpose
   termVersion    String
-  channel        String         // whatsapp, presencial, formulário…
+  channel        String // whatsapp, presencial, formulário…
   grantedAt      DateTime       @default(now()) @db.Timestamptz(3)
   revokedAt      DateTime?      @db.Timestamptz(3)
-  evidence       Json?          // ex.: id da mensagem, IP
+  evidence       Json? // ex.: id da mensagem, IP
 
-  organization   Organization   @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  patient        Patient?       @relation(fields: [patientId], references: [id])
-  lead           Lead?          @relation(fields: [leadId], references: [id])
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  patient      Patient?     @relation(fields: [patientId], references: [id])
+  lead         Lead?        @relation(fields: [leadId], references: [id])
 
   @@index([organizationId, patientId])
   @@map("consents")
@@ -378,19 +380,19 @@ enum ServiceKind {
 }
 
 model Service {
-  id             String      @id @default(uuid()) @db.Uuid
-  organizationId String      @db.Uuid
-  name           String
-  kind           ServiceKind @default(SESSION)
-  durationMinutes Int        @default(50)
-  priceCents     Int         @default(0)
-  color          String?
-  isActive       Boolean     @default(true)
-  createdAt      DateTime    @default(now()) @db.Timestamptz(3)
-  updatedAt      DateTime    @updatedAt @db.Timestamptz(3)
+  id              String      @id @default(uuid()) @db.Uuid
+  organizationId  String      @db.Uuid
+  name            String
+  kind            ServiceKind @default(SESSION)
+  durationMinutes Int         @default(50)
+  priceCents      Int         @default(0)
+  color           String?
+  isActive        Boolean     @default(true)
+  createdAt       DateTime    @default(now()) @db.Timestamptz(3)
+  updatedAt       DateTime    @updatedAt @db.Timestamptz(3)
 
-  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  appointments   Appointment[]
+  organization     Organization       @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  appointments     Appointment[]
   recurrenceSeries RecurrenceSeries[]
 
   @@index([organizationId])
@@ -398,14 +400,14 @@ model Service {
 }
 
 model ProfessionalProfile {
-  userId       String   @id @db.Uuid
-  crefito      String?
-  specialties  String[]
-  bio          String?
-  calendarColor String  @default("#0f766e")
+  userId             String   @id @db.Uuid
+  crefito            String?
+  specialties        String[]
+  bio                String?
+  calendarColor      String   @default("#0f766e")
   // Integração Google Calendar por profissional (Fase 5)
   externalCalendarId String?
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user               User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("professional_profiles")
 }
@@ -416,13 +418,13 @@ model AvailabilityRule {
   organizationId String   @db.Uuid
   unitId         String   @db.Uuid
   professionalId String?  @db.Uuid
-  weekday        Int      // 0=domingo … 6=sábado
+  weekday        Int // 0=domingo … 6=sábado
   startTime      String   @db.VarChar(5) // "08:00"
   endTime        String   @db.VarChar(5) // "12:00"
   createdAt      DateTime @default(now()) @db.Timestamptz(3)
 
-  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  unit           Unit         @relation(fields: [unitId], references: [id], onDelete: Cascade)
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  unit         Unit         @relation(fields: [unitId], references: [id], onDelete: Cascade)
 
   @@index([organizationId, unitId, weekday])
   @@map("availability_rules")
@@ -438,19 +440,19 @@ enum AvailabilityExceptionKind {
 }
 
 model AvailabilityException {
-  id             String   @id @default(uuid()) @db.Uuid
-  organizationId String   @db.Uuid
-  unitId         String   @db.Uuid
-  professionalId String?  @db.Uuid
+  id             String                    @id @default(uuid()) @db.Uuid
+  organizationId String                    @db.Uuid
+  unitId         String                    @db.Uuid
+  professionalId String?                   @db.Uuid
   kind           AvailabilityExceptionKind
-  startsAt       DateTime @db.Timestamptz(3)
-  endsAt         DateTime @db.Timestamptz(3)
+  startsAt       DateTime                  @db.Timestamptz(3)
+  endsAt         DateTime                  @db.Timestamptz(3)
   reason         String?
-  createdById    String?  @db.Uuid
-  createdAt      DateTime @default(now()) @db.Timestamptz(3)
+  createdById    String?                   @db.Uuid
+  createdAt      DateTime                  @default(now()) @db.Timestamptz(3)
 
-  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  unit           Unit         @relation(fields: [unitId], references: [id], onDelete: Cascade)
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  unit         Unit         @relation(fields: [unitId], references: [id], onDelete: Cascade)
 
   @@index([organizationId, startsAt])
   @@map("availability_exceptions")
@@ -463,7 +465,7 @@ model Holiday {
   name           String
   isRecurring    Boolean  @default(false)
 
-  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
   @@unique([organizationId, date])
   @@map("holidays")
@@ -474,22 +476,22 @@ model Holiday {
 // ─────────────────────────────────────────────────────────────
 
 enum LeadStage {
-  NEW_CONTACT          // 1. Novo contato
-  FIRST_SERVICE        // 2. Primeiro atendimento
-  DATA_COLLECTED       // 3. Dados coletados
+  NEW_CONTACT // 1. Novo contato
+  FIRST_SERVICE // 2. Primeiro atendimento
+  DATA_COLLECTED // 3. Dados coletados
   EVALUATION_SCHEDULED // 4. Avaliação agendada
-  EVALUATION_DONE      // 5. Avaliação realizada
-  CONVERTED            // virou paciente → card segue em patients.crmStage
+  EVALUATION_DONE // 5. Avaliação realizada
+  CONVERTED // virou paciente → card segue em patients.crmStage
   LOST
 }
 
 enum PatientStage {
-  TREATMENT_STARTED    // 6. Tratamento iniciado
-  ACTIVE               // 7. Paciente ativo
-  IN_TREATMENT         // 8. Tratamento em andamento
-  DISCHARGED           // 9. Alta
-  INACTIVE             // 10. Paciente inativo
-  REACTIVATION         // 11. Reativação
+  TREATMENT_STARTED // 6. Tratamento iniciado
+  ACTIVE // 7. Paciente ativo
+  IN_TREATMENT // 8. Tratamento em andamento
+  DISCHARGED // 9. Alta
+  INACTIVE // 10. Paciente inativo
+  REACTIVATION // 11. Reativação
 }
 
 enum LeadSource {
@@ -511,43 +513,43 @@ enum LeadTemperature {
 }
 
 model Lead {
-  id              String          @id @default(uuid()) @db.Uuid
-  organizationId  String          @db.Uuid
-  name            String
-  phone           String
+  id             String           @id @default(uuid()) @db.Uuid
+  organizationId String           @db.Uuid
+  name           String
+  phone          String
   /// Somente dígitos do telefone, para busca e deduplicação
-  phoneDigits     String?
-  email           String?
-  cpfEncrypted    String?
-  cpfHash         String?
-  birthDate       DateTime?       @db.Date
-  source          LeadSource      @default(OTHER)
-  sourceDetail    String?
-  stage           LeadStage       @default(NEW_CONTACT)
-  temperature     LeadTemperature?
-  reason          String?         // motivo do contato
-  bodyRegion      String?
-  hasDiagnosis    Boolean?
-  previousPhysio  Boolean?
-  intakeAnswers   Json?           // respostas completas do bot
-  firstContactAt  DateTime        @default(now()) @db.Timestamptz(3)
-  lastContactAt   DateTime?       @db.Timestamptz(3)
-  lostReason      String?
-  responsibleId   String?         @db.Uuid
-  patientId       String?         @unique @db.Uuid
-  convertedAt     DateTime?       @db.Timestamptz(3)
-  position        Int             @default(0) // ordem no Kanban
-  createdById     String?         @db.Uuid
-  createdAt       DateTime        @default(now()) @db.Timestamptz(3)
-  updatedAt       DateTime        @updatedAt @db.Timestamptz(3)
-  deletedAt       DateTime?       @db.Timestamptz(3)
+  phoneDigits    String?
+  email          String?
+  cpfEncrypted   String?
+  cpfHash        String?
+  birthDate      DateTime?        @db.Date
+  source         LeadSource       @default(OTHER)
+  sourceDetail   String?
+  stage          LeadStage        @default(NEW_CONTACT)
+  temperature    LeadTemperature?
+  reason         String? // motivo do contato
+  bodyRegion     String?
+  hasDiagnosis   Boolean?
+  previousPhysio Boolean?
+  intakeAnswers  Json? // respostas completas do bot
+  firstContactAt DateTime         @default(now()) @db.Timestamptz(3)
+  lastContactAt  DateTime?        @db.Timestamptz(3)
+  lostReason     String?
+  responsibleId  String?          @db.Uuid
+  patientId      String?          @unique @db.Uuid
+  convertedAt    DateTime?        @db.Timestamptz(3)
+  position       Int              @default(0) // ordem no Kanban
+  createdById    String?          @db.Uuid
+  createdAt      DateTime         @default(now()) @db.Timestamptz(3)
+  updatedAt      DateTime         @updatedAt @db.Timestamptz(3)
+  deletedAt      DateTime?        @db.Timestamptz(3)
 
-  organization    Organization    @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  responsible     User?           @relation("LeadResponsible", fields: [responsibleId], references: [id])
-  patient         Patient?        @relation(fields: [patientId], references: [id])
-  conversations   Conversation[]
-  tasks           Task[]
-  consents        Consent[]
+  organization  Organization   @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  responsible   User?          @relation("LeadResponsible", fields: [responsibleId], references: [id])
+  patient       Patient?       @relation(fields: [patientId], references: [id])
+  conversations Conversation[]
+  tasks         Task[]
+  consents      Consent[]
 
   @@index([organizationId, stage])
   @@index([organizationId, phone])
@@ -562,56 +564,56 @@ enum Sex {
 }
 
 model Patient {
-  id              String       @id @default(uuid()) @db.Uuid
-  organizationId  String       @db.Uuid
-  code            Int          // código sequencial por organização (ex.: P-0042)
-  name            String
-  socialName      String?
-  cpfEncrypted    String?
-  cpfHash         String?
-  birthDate       DateTime?    @db.Date
-  sex             Sex          @default(NOT_INFORMED)
-  phone           String?
-  whatsapp        String?
+  id                    String       @id @default(uuid()) @db.Uuid
+  organizationId        String       @db.Uuid
+  code                  Int // código sequencial por organização (ex.: P-0042)
+  name                  String
+  socialName            String?
+  cpfEncrypted          String?
+  cpfHash               String?
+  birthDate             DateTime?    @db.Date
+  sex                   Sex          @default(NOT_INFORMED)
+  phone                 String?
+  whatsapp              String?
   /// Dígitos de telefone + WhatsApp, para busca (mantido pela aplicação)
-  phoneDigits     String?
-  email           String?
-  photoUrl        String?
-  profession      String?
-  addressLine     String?
-  city            String?
-  state           String?      @db.VarChar(2)
-  zipCode         String?      @db.VarChar(9)
+  phoneDigits           String?
+  email                 String?
+  photoUrl              String?
+  profession            String?
+  addressLine           String?
+  city                  String?
+  state                 String?      @db.VarChar(2)
+  zipCode               String?      @db.VarChar(9)
   emergencyContactName  String?
   emergencyContactPhone String?
-  source          LeadSource   @default(OTHER)
-  crmStage        PatientStage @default(TREATMENT_STARTED)
-  responsibleId   String?      @db.Uuid
-  lastContactAt   DateTime?    @db.Timestamptz(3)
-  notes           String?
-  createdById     String?      @db.Uuid
-  updatedById     String?      @db.Uuid
-  createdAt       DateTime     @default(now()) @db.Timestamptz(3)
-  updatedAt       DateTime     @updatedAt @db.Timestamptz(3)
-  deletedAt       DateTime?    @db.Timestamptz(3)
-  anonymizedAt    DateTime?    @db.Timestamptz(3)
+  source                LeadSource   @default(OTHER)
+  crmStage              PatientStage @default(TREATMENT_STARTED)
+  responsibleId         String?      @db.Uuid
+  lastContactAt         DateTime?    @db.Timestamptz(3)
+  notes                 String?
+  createdById           String?      @db.Uuid
+  updatedById           String?      @db.Uuid
+  createdAt             DateTime     @default(now()) @db.Timestamptz(3)
+  updatedAt             DateTime     @updatedAt @db.Timestamptz(3)
+  deletedAt             DateTime?    @db.Timestamptz(3)
+  anonymizedAt          DateTime?    @db.Timestamptz(3)
 
-  organization    Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  responsible     User?        @relation("PatientResponsible", fields: [responsibleId], references: [id])
-  lead            Lead?
-  clinicalProfile ClinicalProfile?
-  conditions      PatientCondition[]
-  evaluations     Evaluation[]
-  treatmentPlans  TreatmentPlan[]
+  organization      Organization       @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  responsible       User?              @relation("PatientResponsible", fields: [responsibleId], references: [id])
+  lead              Lead?
+  clinicalProfile   ClinicalProfile?
+  conditions        PatientCondition[]
+  evaluations       Evaluation[]
+  treatmentPlans    TreatmentPlan[]
   treatmentSessions TreatmentSession[]
-  appointments    Appointment[]
-  recurrenceSeries RecurrenceSeries[]
-  packages        Package[]
-  payments        Payment[]
-  conversations   Conversation[]
-  tasks           Task[]
-  documents       Document[]
-  consents        Consent[]
+  appointments      Appointment[]
+  recurrenceSeries  RecurrenceSeries[]
+  packages          Package[]
+  payments          Payment[]
+  conversations     Conversation[]
+  tasks             Task[]
+  documents         Document[]
+  consents          Consent[]
 
   @@unique([organizationId, code])
   @@unique([organizationId, cpfHash])
@@ -643,48 +645,48 @@ model MedicalCondition {
   type           ConditionType
   icd10Code      String?       @db.VarChar(8)
 
-  organization   Organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  patients       PatientCondition[]
+  organization Organization       @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  patients     PatientCondition[]
 
   @@unique([organizationId, name, type])
   @@map("medical_conditions")
 }
 
 model PatientCondition {
-  id                 String        @id @default(uuid()) @db.Uuid
-  patientId          String        @db.Uuid
-  conditionId        String?       @db.Uuid
-  type               ConditionType
-  description        String
-  bodyRegion         String?
-  laterality         String?       // direito, esquerdo, bilateral
-  since              DateTime?     @db.Date
-  isActive           Boolean       @default(true)
-  notes              String?
-  createdById        String?       @db.Uuid
-  createdAt          DateTime      @default(now()) @db.Timestamptz(3)
-  updatedAt          DateTime      @updatedAt @db.Timestamptz(3)
+  id          String        @id @default(uuid()) @db.Uuid
+  patientId   String        @db.Uuid
+  conditionId String?       @db.Uuid
+  type        ConditionType
+  description String
+  bodyRegion  String?
+  laterality  String? // direito, esquerdo, bilateral
+  since       DateTime?     @db.Date
+  isActive    Boolean       @default(true)
+  notes       String?
+  createdById String?       @db.Uuid
+  createdAt   DateTime      @default(now()) @db.Timestamptz(3)
+  updatedAt   DateTime      @updatedAt @db.Timestamptz(3)
 
-  patient            Patient       @relation(fields: [patientId], references: [id], onDelete: Cascade)
-  condition          MedicalCondition? @relation(fields: [conditionId], references: [id])
+  patient   Patient           @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  condition MedicalCondition? @relation(fields: [conditionId], references: [id])
 
   @@index([patientId])
   @@map("patient_conditions")
 }
 
 model ClinicalProfile {
-  patientId          String   @id @db.Uuid
-  mainComplaint      String?
-  diagnosis          String?
-  medicalHistory     String?
-  medications        String?
-  allergies          String?
-  contraindications  String?
-  observations       String?
-  updatedById        String?  @db.Uuid
-  updatedAt          DateTime @updatedAt @db.Timestamptz(3)
+  patientId         String   @id @db.Uuid
+  mainComplaint     String?
+  diagnosis         String?
+  medicalHistory    String?
+  medications       String?
+  allergies         String?
+  contraindications String?
+  observations      String?
+  updatedById       String?  @db.Uuid
+  updatedAt         DateTime @updatedAt @db.Timestamptz(3)
 
-  patient            Patient  @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  patient Patient @relation(fields: [patientId], references: [id], onDelete: Cascade)
 
   @@map("clinical_profiles")
 }
@@ -703,23 +705,23 @@ model Evaluation {
   appointmentId  String?        @unique @db.Uuid
   type           EvaluationType @default(INITIAL)
   performedAt    DateTime       @db.Timestamptz(3)
-  painScale      Int?           // EVA 0–10
+  painScale      Int? // EVA 0–10
   mainComplaint  String?
-  mobility       Json?          // { segmento: descrição }
-  strength       Json?          // { grupo muscular: grau 0–5 }
-  rangeOfMotion  Json?          // { articulação/movimento: graus }
-  tests          Json?          // [{ nome, resultado }]
-  scales         Json?          // [{ nome, pontuação }]
+  mobility       Json? // { segmento: descrição }
+  strength       Json? // { grupo muscular: grau 0–5 }
+  rangeOfMotion  Json? // { articulação/movimento: graus }
+  tests          Json? // [{ nome, resultado }]
+  scales         Json? // [{ nome, pontuação }]
   otherParams    Json?
   conclusion     String?
   createdAt      DateTime       @default(now()) @db.Timestamptz(3)
   updatedAt      DateTime       @updatedAt @db.Timestamptz(3)
   deletedAt      DateTime?      @db.Timestamptz(3)
 
-  organization   Organization   @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  patient        Patient        @relation(fields: [patientId], references: [id], onDelete: Cascade)
-  professional   User           @relation(fields: [professionalId], references: [id])
-  appointment    Appointment?   @relation(fields: [appointmentId], references: [id])
+  organization   Organization    @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  patient        Patient         @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  professional   User            @relation(fields: [professionalId], references: [id])
+  appointment    Appointment?    @relation(fields: [appointmentId], references: [id])
   treatmentPlans TreatmentPlan[]
 
   @@index([organizationId, patientId, performedAt])
@@ -750,10 +752,10 @@ model TreatmentPlan {
   createdAt        DateTime            @default(now()) @db.Timestamptz(3)
   updatedAt        DateTime            @updatedAt @db.Timestamptz(3)
 
-  organization     Organization        @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  patient          Patient             @relation(fields: [patientId], references: [id], onDelete: Cascade)
-  evaluation       Evaluation?         @relation(fields: [evaluationId], references: [id])
-  sessions         TreatmentSession[]
+  organization Organization       @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  patient      Patient            @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  evaluation   Evaluation?        @relation(fields: [evaluationId], references: [id])
+  sessions     TreatmentSession[]
 
   @@index([organizationId, patientId])
   @@map("treatment_plans")
@@ -761,24 +763,24 @@ model TreatmentPlan {
 
 /// Sessão efetivamente realizada (1:1 com o agendamento atendido).
 model TreatmentSession {
-  id              String         @id @default(uuid()) @db.Uuid
-  organizationId  String         @db.Uuid
-  patientId       String         @db.Uuid
-  professionalId  String         @db.Uuid
-  appointmentId   String?        @unique @db.Uuid
-  treatmentPlanId String?        @db.Uuid
+  id              String   @id @default(uuid()) @db.Uuid
+  organizationId  String   @db.Uuid
+  patientId       String   @db.Uuid
+  professionalId  String   @db.Uuid
+  appointmentId   String?  @unique @db.Uuid
+  treatmentPlanId String?  @db.Uuid
   sessionNumber   Int
-  performedAt     DateTime       @db.Timestamptz(3)
+  performedAt     DateTime @db.Timestamptz(3)
   durationMinutes Int?
-  createdAt       DateTime       @default(now()) @db.Timestamptz(3)
+  createdAt       DateTime @default(now()) @db.Timestamptz(3)
 
-  organization    Organization   @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  patient         Patient        @relation(fields: [patientId], references: [id], onDelete: Cascade)
-  professional    User           @relation("SessionProfessional", fields: [professionalId], references: [id])
-  appointment     Appointment?   @relation(fields: [appointmentId], references: [id])
-  treatmentPlan   TreatmentPlan? @relation(fields: [treatmentPlanId], references: [id])
-  evolution       SessionEvolution?
-  packageUsage    PackageSession?
+  organization  Organization      @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  patient       Patient           @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  professional  User              @relation("SessionProfessional", fields: [professionalId], references: [id])
+  appointment   Appointment?      @relation(fields: [appointmentId], references: [id])
+  treatmentPlan TreatmentPlan?    @relation(fields: [treatmentPlanId], references: [id])
+  evolution     SessionEvolution?
+  packageUsage  PackageSession?
 
   @@unique([patientId, sessionNumber])
   @@index([organizationId, performedAt])
@@ -787,44 +789,44 @@ model TreatmentSession {
 
 /// Evolução da sessão. O conteúdo vigente é a última versão; versões anteriores nunca são apagadas.
 model SessionEvolution {
-  id               String    @id @default(uuid()) @db.Uuid
-  organizationId   String    @db.Uuid
-  sessionId        String    @unique @db.Uuid
-  currentVersion   Int       @default(1)
-  deletedAt        DateTime? @db.Timestamptz(3)
-  deletedById      String?   @db.Uuid
-  deleteReason     String?
-  createdAt        DateTime  @default(now()) @db.Timestamptz(3)
-  updatedAt        DateTime  @updatedAt @db.Timestamptz(3)
+  id             String    @id @default(uuid()) @db.Uuid
+  organizationId String    @db.Uuid
+  sessionId      String    @unique @db.Uuid
+  currentVersion Int       @default(1)
+  deletedAt      DateTime? @db.Timestamptz(3)
+  deletedById    String?   @db.Uuid
+  deleteReason   String?
+  createdAt      DateTime  @default(now()) @db.Timestamptz(3)
+  updatedAt      DateTime  @updatedAt @db.Timestamptz(3)
 
-  organization     Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  session          TreatmentSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
-  versions         SessionEvolutionVersion[]
+  organization Organization              @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  session      TreatmentSession          @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  versions     SessionEvolutionVersion[]
 
   @@map("session_evolutions")
 }
 
 /// Imutável (trigger bloqueia UPDATE/DELETE).
 model SessionEvolutionVersion {
-  id               String   @id @default(uuid()) @db.Uuid
-  evolutionId      String   @db.Uuid
-  version          Int
-  complaint        String?
-  patientState     String?
-  painScale        Int?
-  procedures       String?
-  exercises        String?
-  techniques       String?
+  id                String   @id @default(uuid()) @db.Uuid
+  evolutionId       String   @db.Uuid
+  version           Int
+  complaint         String?
+  patientState      String?
+  painScale         Int?
+  procedures        String?
+  exercises         String?
+  techniques        String?
   treatmentResponse String?
-  evolutionText    String   // "Evolução / Observações do atendimento" (campo livre)
-  guidance         String?
-  nextSteps        String?
-  editReason       String?
-  authorId         String   @db.Uuid
-  createdAt        DateTime @default(now()) @db.Timestamptz(3)
+  evolutionText     String // "Evolução / Observações do atendimento" (campo livre)
+  guidance          String?
+  nextSteps         String?
+  editReason        String?
+  authorId          String   @db.Uuid
+  createdAt         DateTime @default(now()) @db.Timestamptz(3)
 
-  evolution        SessionEvolution @relation(fields: [evolutionId], references: [id], onDelete: Restrict)
-  author           User             @relation(fields: [authorId], references: [id])
+  evolution SessionEvolution @relation(fields: [evolutionId], references: [id], onDelete: Restrict)
+  author    User             @relation(fields: [authorId], references: [id])
 
   @@unique([evolutionId, version])
   @@map("session_evolution_versions")
@@ -842,7 +844,7 @@ enum AppointmentStatus {
   CANCELLED
   NO_SHOW
   RESCHEDULED
-  BLOCKED    // bloqueio de horário
+  BLOCKED // bloqueio de horário
 }
 
 model RecurrenceSeries {
@@ -852,7 +854,7 @@ model RecurrenceSeries {
   professionalId  String    @db.Uuid
   serviceId       String?   @db.Uuid
   packageId       String?   @db.Uuid
-  weekdays        Int[]     // [2,4] = terça e quinta
+  weekdays        Int[] // [2,4] = terça e quinta
   startTime       String    @db.VarChar(5)
   durationMinutes Int
   startDate       DateTime  @db.Date
@@ -862,47 +864,47 @@ model RecurrenceSeries {
   createdById     String?   @db.Uuid
   createdAt       DateTime  @default(now()) @db.Timestamptz(3)
 
-  organization    Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  patient         Patient      @relation(fields: [patientId], references: [id], onDelete: Cascade)
-  service         Service?     @relation(fields: [serviceId], references: [id])
-  appointments    Appointment[]
+  organization Organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  patient      Patient       @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  service      Service?      @relation(fields: [serviceId], references: [id])
+  appointments Appointment[]
 
   @@map("recurrence_series")
 }
 
 model Appointment {
-  id               String            @id @default(uuid()) @db.Uuid
-  organizationId   String            @db.Uuid
-  unitId           String            @db.Uuid
-  professionalId   String            @db.Uuid
-  patientId        String?           @db.Uuid // null quando for bloqueio
-  serviceId        String?           @db.Uuid
-  packageId        String?           @db.Uuid
-  seriesId         String?           @db.Uuid
-  startsAt         DateTime          @db.Timestamptz(3)
-  endsAt           DateTime          @db.Timestamptz(3)
-  status           AppointmentStatus @default(SCHEDULED)
-  priceCents       Int               @default(0)
-  notes            String?
-  cancelReason     String?
-  rescheduledFromId String?          @db.Uuid
-  confirmedAt      DateTime?         @db.Timestamptz(3)
-  reminder24hSentAt DateTime?        @db.Timestamptz(3)
-  reminder2hSentAt  DateTime?        @db.Timestamptz(3)
-  externalEventId  String?           // Google Calendar
-  createdById      String?           @db.Uuid
-  createdAt        DateTime          @default(now()) @db.Timestamptz(3)
-  updatedAt        DateTime          @updatedAt @db.Timestamptz(3)
+  id                String            @id @default(uuid()) @db.Uuid
+  organizationId    String            @db.Uuid
+  unitId            String            @db.Uuid
+  professionalId    String            @db.Uuid
+  patientId         String?           @db.Uuid // null quando for bloqueio
+  serviceId         String?           @db.Uuid
+  packageId         String?           @db.Uuid
+  seriesId          String?           @db.Uuid
+  startsAt          DateTime          @db.Timestamptz(3)
+  endsAt            DateTime          @db.Timestamptz(3)
+  status            AppointmentStatus @default(SCHEDULED)
+  priceCents        Int               @default(0)
+  notes             String?
+  cancelReason      String?
+  rescheduledFromId String?           @db.Uuid
+  confirmedAt       DateTime?         @db.Timestamptz(3)
+  reminder24hSentAt DateTime?         @db.Timestamptz(3)
+  reminder2hSentAt  DateTime?         @db.Timestamptz(3)
+  externalEventId   String? // Google Calendar
+  createdById       String?           @db.Uuid
+  createdAt         DateTime          @default(now()) @db.Timestamptz(3)
+  updatedAt         DateTime          @updatedAt @db.Timestamptz(3)
 
-  organization     Organization      @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  unit             Unit              @relation(fields: [unitId], references: [id])
-  professional     User              @relation("AppointmentProfessional", fields: [professionalId], references: [id])
-  patient          Patient?          @relation(fields: [patientId], references: [id])
-  service          Service?          @relation(fields: [serviceId], references: [id])
-  package          Package?          @relation(fields: [packageId], references: [id])
-  series           RecurrenceSeries? @relation(fields: [seriesId], references: [id])
-  rescheduledFrom  Appointment?      @relation("Reschedule", fields: [rescheduledFromId], references: [id])
-  rescheduledTo    Appointment[]     @relation("Reschedule")
+  organization     Organization               @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  unit             Unit                       @relation(fields: [unitId], references: [id])
+  professional     User                       @relation("AppointmentProfessional", fields: [professionalId], references: [id])
+  patient          Patient?                   @relation(fields: [patientId], references: [id])
+  service          Service?                   @relation(fields: [serviceId], references: [id])
+  package          Package?                   @relation(fields: [packageId], references: [id])
+  series           RecurrenceSeries?          @relation(fields: [seriesId], references: [id])
+  rescheduledFrom  Appointment?               @relation("Reschedule", fields: [rescheduledFromId], references: [id])
+  rescheduledTo    Appointment[]              @relation("Reschedule")
   statusHistory    AppointmentStatusHistory[]
   treatmentSession TreatmentSession?
   evaluation       Evaluation?
@@ -915,16 +917,16 @@ model Appointment {
 }
 
 model AppointmentStatusHistory {
-  id            String            @id @default(uuid()) @db.Uuid
-  appointmentId String            @db.Uuid
+  id            String             @id @default(uuid()) @db.Uuid
+  appointmentId String             @db.Uuid
   fromStatus    AppointmentStatus?
   toStatus      AppointmentStatus
-  changedById   String?           @db.Uuid
-  channel       String?           // sistema, whatsapp (botão CONFIRMAR), recepção…
+  changedById   String?            @db.Uuid
+  channel       String? // sistema, whatsapp (botão CONFIRMAR), recepção…
   reason        String?
-  createdAt     DateTime          @default(now()) @db.Timestamptz(3)
+  createdAt     DateTime           @default(now()) @db.Timestamptz(3)
 
-  appointment   Appointment       @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
+  appointment Appointment @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
 
   @@index([appointmentId])
   @@map("appointment_status_history")
@@ -964,8 +966,8 @@ model PackageTemplate {
   isActive       Boolean  @default(true)
   createdAt      DateTime @default(now()) @db.Timestamptz(3)
 
-  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  packages       Package[]
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  packages     Package[]
 
   @@map("package_templates")
 }
@@ -993,26 +995,26 @@ model Package {
   createdAt          DateTime      @default(now()) @db.Timestamptz(3)
   updatedAt          DateTime      @updatedAt @db.Timestamptz(3)
 
-  organization       Organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  patient            Patient       @relation(fields: [patientId], references: [id], onDelete: Cascade)
-  template           PackageTemplate? @relation(fields: [templateId], references: [id])
-  usages             PackageSession[]
-  appointments       Appointment[]
-  payments           Payment[]
+  organization Organization     @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  patient      Patient          @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  template     PackageTemplate? @relation(fields: [templateId], references: [id])
+  usages       PackageSession[]
+  appointments Appointment[]
+  payments     Payment[]
 
   @@index([organizationId, patientId])
   @@map("packages")
 }
 
 model PackageSession {
-  id         String   @id @default(uuid()) @db.Uuid
-  packageId  String   @db.Uuid
-  sessionId  String   @unique @db.Uuid
-  usedAt     DateTime @default(now()) @db.Timestamptz(3)
+  id         String    @id @default(uuid()) @db.Uuid
+  packageId  String    @db.Uuid
+  sessionId  String    @unique @db.Uuid
+  usedAt     DateTime  @default(now()) @db.Timestamptz(3)
   reversedAt DateTime? @db.Timestamptz(3)
 
-  package    Package          @relation(fields: [packageId], references: [id], onDelete: Cascade)
-  session    TreatmentSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  package Package          @relation(fields: [packageId], references: [id], onDelete: Cascade)
+  session TreatmentSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
 
   @@index([packageId])
   @@map("package_sessions")
@@ -1027,34 +1029,34 @@ enum RevenueKind {
 
 /// Conta a receber.
 model Payment {
-  id             String        @id @default(uuid()) @db.Uuid
-  organizationId String        @db.Uuid
-  unitId         String?       @db.Uuid
-  patientId      String?       @db.Uuid
-  appointmentId  String?       @db.Uuid
-  packageId      String?       @db.Uuid
-  kind           RevenueKind   @default(SESSION)
-  description    String
-  amountCents    Int
-  paidCents      Int           @default(0)
-  dueDate        DateTime      @db.Date
-  status         PaymentStatus @default(PENDING)
-  method         PaymentMethod?
-  paidAt         DateTime?     @db.Timestamptz(3)
-  installment    Int?
-  installments   Int?
+  id              String         @id @default(uuid()) @db.Uuid
+  organizationId  String         @db.Uuid
+  unitId          String?        @db.Uuid
+  patientId       String?        @db.Uuid
+  appointmentId   String?        @db.Uuid
+  packageId       String?        @db.Uuid
+  kind            RevenueKind    @default(SESSION)
+  description     String
+  amountCents     Int
+  paidCents       Int            @default(0)
+  dueDate         DateTime       @db.Date
+  status          PaymentStatus  @default(PENDING)
+  method          PaymentMethod?
+  paidAt          DateTime?      @db.Timestamptz(3)
+  installment     Int?
+  installments    Int?
   gatewayChargeId String?
-  notes          String?
-  createdById    String?       @db.Uuid
-  createdAt      DateTime      @default(now()) @db.Timestamptz(3)
-  updatedAt      DateTime      @updatedAt @db.Timestamptz(3)
+  notes           String?
+  createdById     String?        @db.Uuid
+  createdAt       DateTime       @default(now()) @db.Timestamptz(3)
+  updatedAt       DateTime       @updatedAt @db.Timestamptz(3)
 
-  organization   Organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  unit           Unit?         @relation(fields: [unitId], references: [id])
-  patient        Patient?      @relation(fields: [patientId], references: [id])
-  appointment    Appointment?  @relation(fields: [appointmentId], references: [id])
-  package        Package?      @relation(fields: [packageId], references: [id])
-  transactions   FinancialTransaction[]
+  organization Organization           @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  unit         Unit?                  @relation(fields: [unitId], references: [id])
+  patient      Patient?               @relation(fields: [patientId], references: [id])
+  appointment  Appointment?           @relation(fields: [appointmentId], references: [id])
+  package      Package?               @relation(fields: [packageId], references: [id])
+  transactions FinancialTransaction[]
 
   @@index([organizationId, dueDate])
   @@index([organizationId, status])
@@ -1062,41 +1064,41 @@ model Payment {
 }
 
 model ExpenseCategory {
-  id             String   @id @default(uuid()) @db.Uuid
-  organizationId String   @db.Uuid
-  name           String   // Aluguel, Funcionários, Equipamentos, Materiais, Marketing, Software, Impostos, Outros
-  isSystem       Boolean  @default(false)
+  id             String  @id @default(uuid()) @db.Uuid
+  organizationId String  @db.Uuid
+  name           String // Aluguel, Funcionários, Equipamentos, Materiais, Marketing, Software, Impostos, Outros
+  isSystem       Boolean @default(false)
 
-  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  expenses       Expense[]
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  expenses     Expense[]
 
   @@unique([organizationId, name])
   @@map("expense_categories")
 }
 
 model Expense {
-  id             String        @id @default(uuid()) @db.Uuid
-  organizationId String        @db.Uuid
-  unitId         String?       @db.Uuid
-  categoryId     String        @db.Uuid
+  id             String         @id @default(uuid()) @db.Uuid
+  organizationId String         @db.Uuid
+  unitId         String?        @db.Uuid
+  categoryId     String         @db.Uuid
   description    String
   amountCents    Int
-  paidCents      Int           @default(0)
-  dueDate        DateTime      @db.Date
-  status         PaymentStatus @default(PENDING)
+  paidCents      Int            @default(0)
+  dueDate        DateTime       @db.Date
+  status         PaymentStatus  @default(PENDING)
   method         PaymentMethod?
-  paidAt         DateTime?     @db.Timestamptz(3)
-  isRecurring    Boolean       @default(false)
+  paidAt         DateTime?      @db.Timestamptz(3)
+  isRecurring    Boolean        @default(false)
   supplier       String?
   notes          String?
-  createdById    String?       @db.Uuid
-  createdAt      DateTime      @default(now()) @db.Timestamptz(3)
-  updatedAt      DateTime      @updatedAt @db.Timestamptz(3)
+  createdById    String?        @db.Uuid
+  createdAt      DateTime       @default(now()) @db.Timestamptz(3)
+  updatedAt      DateTime       @updatedAt @db.Timestamptz(3)
 
-  organization   Organization    @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  unit           Unit?           @relation(fields: [unitId], references: [id])
-  category       ExpenseCategory @relation(fields: [categoryId], references: [id])
-  transactions   FinancialTransaction[]
+  organization Organization           @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  unit         Unit?                  @relation(fields: [unitId], references: [id])
+  category     ExpenseCategory        @relation(fields: [categoryId], references: [id])
+  transactions FinancialTransaction[]
 
   @@index([organizationId, dueDate])
   @@map("expenses")
@@ -1121,9 +1123,9 @@ model FinancialTransaction {
   createdById    String?              @db.Uuid
   createdAt      DateTime             @default(now()) @db.Timestamptz(3)
 
-  organization   Organization         @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  payment        Payment?             @relation(fields: [paymentId], references: [id])
-  expense        Expense?             @relation(fields: [expenseId], references: [id])
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  payment      Payment?     @relation(fields: [paymentId], references: [id])
+  expense      Expense?     @relation(fields: [expenseId], references: [id])
 
   @@index([organizationId, occurredAt])
   @@map("financial_transactions")
@@ -1141,10 +1143,10 @@ model Goal {
   metric         GoalMetric
   periodStart    DateTime   @db.Date
   periodEnd      DateTime   @db.Date
-  target         Int        // centavos para REVENUE; quantidade para os demais
+  target         Int // centavos para REVENUE; quantidade para os demais
   createdAt      DateTime   @default(now()) @db.Timestamptz(3)
 
-  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
   @@unique([organizationId, metric, periodStart])
   @@map("goals")
@@ -1162,32 +1164,36 @@ enum Channel {
 }
 
 enum ConversationStatus {
-  BOT        // bot coletando dados
-  OPEN       // aguardando atendimento humano
+  BOT // bot coletando dados
+  OPEN // aguardando atendimento humano
   ASSIGNED
   CLOSED
 }
 
 model Conversation {
-  id              String             @id @default(uuid()) @db.Uuid
-  organizationId  String             @db.Uuid
-  channel         Channel
-  externalContact String             // telefone E.164 ou e-mail
-  patientId       String?            @db.Uuid
-  leadId          String?            @db.Uuid
-  status          ConversationStatus @default(OPEN)
-  botState        Json?              // passo atual + respostas do fluxo de cadastro
-  assignedToId    String?            @db.Uuid
-  lastMessageAt   DateTime?          @db.Timestamptz(3)
+  id                  String             @id @default(uuid()) @db.Uuid
+  organizationId      String             @db.Uuid
+  channel             Channel
+  externalContact     String // telefone E.164 ou e-mail
+  patientId           String?            @db.Uuid
+  leadId              String?            @db.Uuid
+  status              ConversationStatus @default(OPEN)
+  botState            Json? // passo atual + respostas do fluxo de cadastro
+  assignedToId        String?            @db.Uuid
+  lastMessageAt       DateTime?          @db.Timestamptz(3)
   // WhatsApp: mensagens livres só dentro da janela de 24 h após a última mensagem do cliente
-  serviceWindowEndsAt DateTime?      @db.Timestamptz(3)
-  createdAt       DateTime           @default(now()) @db.Timestamptz(3)
-  updatedAt       DateTime           @updatedAt @db.Timestamptz(3)
+  serviceWindowEndsAt DateTime?          @db.Timestamptz(3)
+  /// Mensagens recebidas ainda não vistas pela equipe
+  unreadCount         Int                @default(0)
+  createdAt           DateTime           @default(now()) @db.Timestamptz(3)
+  updatedAt           DateTime           @updatedAt @db.Timestamptz(3)
 
-  organization    Organization       @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  patient         Patient?           @relation(fields: [patientId], references: [id])
-  lead            Lead?              @relation(fields: [leadId], references: [id])
-  messages        Message[]
+  organization Organization      @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  patient      Patient?          @relation(fields: [patientId], references: [id])
+  lead         Lead?             @relation(fields: [leadId], references: [id])
+  assignedTo   User?             @relation("ConversationAssignee", fields: [assignedToId], references: [id])
+  messages     Message[]
+  dispatches   MessageDispatch[]
 
   @@unique([organizationId, channel, externalContact])
   @@map("conversations")
@@ -1227,41 +1233,59 @@ model Message {
   createdAt      DateTime         @default(now()) @db.Timestamptz(3)
   updatedAt      DateTime         @updatedAt @db.Timestamptz(3)
 
-  organization   Organization     @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  conversation   Conversation?    @relation(fields: [conversationId], references: [id], onDelete: Cascade)
-  template       MessageTemplate? @relation(fields: [templateId], references: [id])
-  sentBy         User?            @relation(fields: [sentById], references: [id])
+  organization Organization     @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  conversation Conversation?    @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  template     MessageTemplate? @relation(fields: [templateId], references: [id])
+  sentBy       User?            @relation(fields: [sentById], references: [id])
 
   @@index([organizationId, createdAt])
   @@index([conversationId, createdAt])
   @@map("messages")
 }
 
-model MessageTemplate {
-  id                  String   @id @default(uuid()) @db.Uuid
-  organizationId      String   @db.Uuid
-  key                 String   // reminder_24h, reminder_2h, no_show, post_session, no_return, welcome_bot…
-  channel             Channel
-  name                String
-  body                String   // variáveis: {{paciente}}, {{data}}, {{hora}}, {{clinica}}
-  buttons             String[] // ex.: CONFIRMAR, REAGENDAR, CANCELAR
-  whatsappTemplateName String? // nome do template aprovado na Meta
-  isActive            Boolean  @default(true)
-  updatedAt           DateTime @updatedAt @db.Timestamptz(3)
+/// Envio automático já feito (idempotência de lembretes e avisos: um por chave + entidade).
+model MessageDispatch {
+  id             String   @id @default(uuid()) @db.Uuid
+  organizationId String   @db.Uuid
+  key            String // reminder_24h, reminder_2h, …
+  entityId       String   @db.Uuid
+  conversationId String?  @db.Uuid
+  messageId      String?  @db.Uuid
+  createdAt      DateTime @default(now()) @db.Timestamptz(3)
 
-  organization        Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  messages            Message[]
+  organization Organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  conversation Conversation? @relation(fields: [conversationId], references: [id], onDelete: SetNull)
+
+  @@unique([organizationId, key, entityId])
+  @@index([conversationId, createdAt])
+  @@map("message_dispatches")
+}
+
+model MessageTemplate {
+  id                   String   @id @default(uuid()) @db.Uuid
+  organizationId       String   @db.Uuid
+  key                  String // reminder_24h, reminder_2h, no_show, post_session, no_return, welcome_bot…
+  channel              Channel
+  name                 String
+  body                 String // variáveis: {{paciente}}, {{data}}, {{hora}}, {{clinica}}
+  buttons              String[] // ex.: CONFIRMAR, REAGENDAR, CANCELAR
+  whatsappTemplateName String? // nome do template aprovado na Meta
+  isActive             Boolean  @default(true)
+  updatedAt            DateTime @updatedAt @db.Timestamptz(3)
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  messages     Message[]
 
   @@unique([organizationId, key, channel])
   @@map("message_templates")
 }
 
 enum AutomationTrigger {
-  APPOINTMENT_BEFORE      // X horas antes
+  APPOINTMENT_BEFORE // X horas antes
   APPOINTMENT_DONE
   APPOINTMENT_NO_SHOW
-  PATIENT_NO_RETURN       // X dias sem próxima sessão
-  PACKAGE_LOW_BALANCE     // restam N sessões
+  PATIENT_NO_RETURN // X dias sem próxima sessão
+  PACKAGE_LOW_BALANCE // restam N sessões
   PAYMENT_OVERDUE
   NEW_LEAD
   LOW_OCCUPANCY
@@ -1281,8 +1305,8 @@ model Automation {
   createdAt      DateTime          @default(now()) @db.Timestamptz(3)
   updatedAt      DateTime          @updatedAt @db.Timestamptz(3)
 
-  organization   Organization      @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  runs           AutomationRun[]
+  organization Organization    @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  runs         AutomationRun[]
 
   @@map("automations")
 }
@@ -1296,7 +1320,7 @@ model AutomationRun {
   output       Json?
   createdAt    DateTime @default(now()) @db.Timestamptz(3)
 
-  automation   Automation @relation(fields: [automationId], references: [id], onDelete: Cascade)
+  automation Automation @relation(fields: [automationId], references: [id], onDelete: Cascade)
 
   // idempotência: a mesma automação não roda duas vezes para a mesma entidade/evento
   @@unique([automationId, entity, entityId])
@@ -1346,10 +1370,10 @@ model Task {
   createdAt      DateTime     @default(now()) @db.Timestamptz(3)
   updatedAt      DateTime     @updatedAt @db.Timestamptz(3)
 
-  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  assignee       User?        @relation("TaskAssignee", fields: [assigneeId], references: [id])
-  patient        Patient?     @relation(fields: [patientId], references: [id])
-  lead           Lead?        @relation(fields: [leadId], references: [id])
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  assignee     User?        @relation("TaskAssignee", fields: [assigneeId], references: [id])
+  patient      Patient?     @relation(fields: [patientId], references: [id])
+  lead         Lead?        @relation(fields: [leadId], references: [id])
 
   @@index([organizationId, status, dueAt])
   @@map("tasks")
@@ -1373,15 +1397,15 @@ model Document {
   fileName       String
   mimeType       String
   sizeBytes      Int
-  storageKey     String           // caminho no storage S3-compatível
+  storageKey     String // caminho no storage S3-compatível
   isClinical     Boolean          @default(true) // exige clinical.read para visualizar
   description    String?
   uploadedById   String?          @db.Uuid
   createdAt      DateTime         @default(now()) @db.Timestamptz(3)
   deletedAt      DateTime?        @db.Timestamptz(3)
 
-  organization   Organization     @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  patient        Patient          @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  patient      Patient      @relation(fields: [patientId], references: [id], onDelete: Cascade)
 
   @@index([organizationId, patientId])
   @@map("documents")
@@ -1412,8 +1436,8 @@ model Notification {
   readAt         DateTime?        @db.Timestamptz(3)
   createdAt      DateTime         @default(now()) @db.Timestamptz(3)
 
-  organization   Organization     @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  user           User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId, readAt])
   @@map("notifications")

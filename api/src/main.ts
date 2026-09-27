@@ -15,7 +15,8 @@ async function bootstrap() {
   // Atrás de proxy (nginx / balanceador): usa o IP real do cliente para auditoria e rate limit.
   app.set('trust proxy', 1);
   app.use(helmet());
-  app.use(json({ limit: '1mb' }));
+  // rawBody: necessário para validar a assinatura do webhook do WhatsApp.
+  app.use(json({ limit: '1mb', verify: (req, _res, buf) => { (req as unknown as { rawBody: Buffer }).rawBody = buf; } }));
   app.use(cookieParser());
   app.enableCors({ origin: config.webUrl, credentials: true });
   app.setGlobalPrefix('api/v1');

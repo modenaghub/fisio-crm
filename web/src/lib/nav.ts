@@ -53,7 +53,7 @@ export const NAV: NavItem[] = [
     features: ['Avaliação inicial e reavaliações (dor, ADM, força, testes e escalas)', 'Plano de tratamento com objetivo, frequência e previsão de término', 'Registro de quem acessou cada prontuário'],
   },
   {
-    to: '/comunicacao', label: 'Comunicação', icon: MessageCircle, permission: 'messages.read', phase: 7,
+    to: '/comunicacao', label: 'Comunicação', icon: MessageCircle, permission: 'messages.read',
     summary: 'Central de mensagens com WhatsApp oficial, e-mail e SMS.',
     features: ['Bot de primeiro contato que cria o lead automaticamente', 'Lembretes 24 h e 2 h antes com botões Confirmar / Reagendar / Cancelar', 'Mensagens após falta, após atendimento e para pacientes sem retorno', 'Atendimento manual pelo fisioterapeuta'],
   },
